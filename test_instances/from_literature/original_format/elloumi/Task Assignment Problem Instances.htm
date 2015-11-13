@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html><head>
+   <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+   <title>Task Assignment Problem Instances</title>
+</head>
+
+<body bgcolor="#FFFFFF" text="#000000">
+
+
+
+<h1 align="center"><font color="#0000FF"><i>The Task Assignment Problem</i></font></h1>
+&nbsp; 
+<p align="center">&nbsp;by <a href="http://cedric.cnam.fr/%7Eelloumi">Sourour 
+  Elloumi</a> <a href="mailto:elloumi@cnam.fr">@</a><br>
+  &nbsp; 
+</p><p align="center"><font size="+1">This problem is also known as the <i><font color="#0000FF">Module 
+  Allocation Problem</font></i> or the <i><font color="#0000FF">Quadratic Semi-Assignment 
+  Problem</font></i><font color="#0000FF"><br>
+  </font></font><br>
+
+</p><center>
+  <p><font size="+1">Our objective is to make instances of the Task Assignmenet 
+    Problem available to the communauty of reasearchers</font>
+  </p><p><font size="+1">Any contribution would be appreciated</font> 
+  </p><p> 
+</p></center>
+<blockquote> 
+    <hr width="100%">
+
+      <p><font color="#0000FF"><a href="http://cedric.cnam.fr/oc/TAP/TAP_description.pdf">Task Assignment Problem 
+        Description</a> </font></p>
+    
+        <p><font color="#0000FF"><a href="http://cedric.cnam.fr/oc/TAP/CTAP_description.pdf">Constrained 
+          Task Assignment Problem Description</a></font></p>
+		  <p><a href="#Format">Files format</a> </p> 
+  <p><a href="http://cedric.cnam.fr/oc/TAP/all_TAP_instances">The TAP instances files</a> </p>
+  <p><a href="http://cedric.cnam.fr/oc/TAP/all_CTAP_instances">The CTAP instances files</a> </p>
+  <p><a href="#References">A few references on the Task Allocation Problem</a> </p>
+ 
+  <p>
+  </p><hr width="100%">
+  <div align="left">
+    <p><br>
+      <b><a name="Format"></a></b><font color="#0000FF" size="+2">Instances and 
+      Solution files format</font><b> &nbsp; </b></p>
+    <p><b><font color="#FF0000">1- TAP Instances</font></b></p>
+  </div>
+  <p> Each <b>.dat</b> file contains one instance, in the following format : Number 
+    of tasks, Number of processors, execution costs, communication costs </p>
+  <blockquote> 
+    <p><font color="#0000FF"> N <br>
+      M</font><br>
+      <font color="#0000FF">For&nbsp; {i in 1..N}&nbsp; For {j in 1..M} e(i,j) 
+      </font><br>
+      <font color="#0000FF">For {i in 1..N-1} For {j in i+1..N} For {k in 1..M} 
+      For{l in 1..M} c(i,k,j,l) </font></p>
+  </blockquote>
+  <p>The corresponding <b>.sol </b>file contains an optimal solution, in the following 
+    format : For each task i, the processor p(i) it is assigned to; the value 
+    of that solution </p>
+  <blockquote> 
+    <p> <font color="#0000FF">For&nbsp; {i in 1..N}&nbsp; i p(i)</font><br>
+      <font color="#0000FF"> Solution value </font></p>
+  </blockquote>
+  <div align="left">
+    <p><b><font color="#FF0000">2- CTAP Instances</font></b></p>
+  </div>
+  <p> Each <b>.dat</b> file contains one instance, in the following format : Number 
+    of tasks, Number of processors, execution costs, communication costs, memory 
+    requirements of the tasks, memory capacity of the processors</p>
+  <blockquote> 
+    <p><font color="#0000FF"> N <br>
+      M</font><br>
+      <font color="#0000FF">For&nbsp;{i in 1..N}&nbsp; For {k in 1..M} e(i,k) 
+      </font><br>
+      <font color="#0000FF">For {i in 1..N-1} For {j in i+1..N} c(i,j)</font><br>
+      <font color="#0000FF">For {i in 1..N} s(i)</font><br>
+      <font color="#0000FF">For {k in 1..M} n(k)</font></p>
+  </blockquote>
+  <p>The corresponding <b>.sol </b>file contains an optimal solution, in the following 
+    format : For each task i, the processor p(i) it is assigned to; the value 
+    of that solution </p>
+  <blockquote> 
+    <p> <font color="#0000FF">For&nbsp; {i in 1..N}&nbsp; i p(i)</font><br>
+      <font color="#0000FF"> Solution value </font></p>
+  </blockquote>
+  <hr>
+  <p><a name="References"></a><font color="#0000FF" size="+1">References</font></p>
+  <p>[1] A. Billionnet and S. Elloumi. Best reduction of the quadratic semi-assignment 
+    problem - Discrete Applied Mathematics (DAM) vol. 109(3), 2001.</p>
+  <p>[2] S. Elloumi, F. Roupin and E. Soutif. Comparison of Different Lower Bounds 
+    for the Constrained Module Allocation Problem - TR CEDRIC No 473, 2003. <a href="http://cedric.cnam.fr/AfficheArticle.php?id=473">Details</a><br>
+  </p>
+  <p>[3] F. Roupin. From Linear to Semidefinite Programming: an Algorithm to obtain 
+    Semidefinite Relaxations for Bivalent Quadratic Problems - TR CEDRIC No 388, 
+    2003. <a href="http://cedric.cnam.fr/AfficheArticle.php?id=388">Details</a><br>
+  </p>
+  <hr>
+  <p><i><font size="-1">Back to <a href="http://cedric.cnam.fr/%7Eelloumi">Sourour 
+    Elloumi's Homepage</a></font></i></p>
+  <p><i><font size="-1">Back to <a href="http://cedric.cnam.fr/oc/" target="_blank">Equipe 
+    Optimisation Combinatoire</a></font></i></p>
+  </blockquote>
+
+
+</body></html>

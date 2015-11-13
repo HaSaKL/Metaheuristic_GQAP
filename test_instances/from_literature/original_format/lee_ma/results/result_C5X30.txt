@@ -1,0 +1,20 @@
+
+ The initial upper bound is 424000.0:
+
+ The searching process is:
+
+
+  The Optimal objective value=357100.0
+
+ Process[2] assigned to location[22]   
+ Process[0] assigned to location[1]   
+ Process[4] assigned to location[0]   
+ Process[3] assigned to location[29]   
+ Process[1] assigned to location[1]   
+
+The total number of the finished assignment is 1135
+The total time of calling Cplex is 12016
+
+
+Algorithm running time(I/O time not included):     93.86
+
