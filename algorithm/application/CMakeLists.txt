@@ -1,6 +1,10 @@
 include_directories(${PARADISEO_INCLUDE_DIR})
 include_directories(${CMAKE_SOURCE_DIR}/src)
 
-add_executable(APPNAME APPNAME.cpp)
-target_link_libraries(APPNAME ${PARADISEO_LIBRARIES})
-target_link_libraries(APPNAME GQAP)
+add_executable(TEST_READ test_ReadProblem.cpp)
+target_link_libraries(TEST_READ ${PARADISEO_LIBRARIES})
+target_link_libraries(TEST_READ lGQAP)
+
+add_executable(TEST_EVAL test_Evaluation.cpp)
+target_link_libraries(TEST_EVAL ${PARADISEO_LIBRARIES})
+target_link_libraries(TEST_EVAL lGQAP)

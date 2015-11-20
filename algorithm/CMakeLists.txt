@@ -5,10 +5,10 @@
 cmake_minimum_required(VERSION 2.8)
 
 # Here define your project name
-project(GQAP)
+project(SMP2)
 
 # Here define the name and the version of your package
-SET(PACKAGE_NAME "GQAP "Package name" FORCE)
+SET(PACKAGE_NAME "SMP2" CACHE STRING "Package name" FORCE)
 SET(PACKAGE_VERSION "0.1" CACHE STRING "Package version" FORCE)
 
 
