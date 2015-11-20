@@ -19,6 +19,8 @@ GQAP::GQAP() {
 	
 	numViolatedLocations 	= 0;
 	numViolatedCapcityUnits = 0;
+	
+	UsedCapacity = std::vector<int>();
 }
 
 
@@ -61,8 +63,8 @@ GQAP::GQAP(std::string& _fileName) {
 	// Read Flow between Equipments
 	vecTemp.resize(numEquip);
 	matrixFlow.resize(numEquip);
-	for (unsigned int i = 0; i < numEquip; i++) {
-			for (unsigned int j = 0; j < numEquip; j++) {
+	for (int i = 0; i < numEquip; i++) {
+			for (int j = 0; j < numEquip; j++) {
 				file >> vecTemp[j];
 			}
 			matrixFlow[i] = vecTemp;
@@ -75,8 +77,8 @@ GQAP::GQAP(std::string& _fileName) {
 	// Read Distance between Locations
 	vecTemp.resize(numLocation);
 	matrixDist.resize(numLocation);
-	for (unsigned int k = 0; k < numLocation; k++) {
-		for (unsigned int h = 0; h < numLocation; h++) {
+	for (int k = 0; k < numLocation; k++) {
+		for (int h = 0; h < numLocation; h++) {
 			file >> vecTemp[h];
 		}
 		matrixDist[k] = vecTemp;
@@ -89,8 +91,8 @@ GQAP::GQAP(std::string& _fileName) {
 	// Read Installation Costs
 	vecTemp.resize(numLocation);
 	matrixInstallCost.resize(numEquip);
-	for (unsigned int i = 0; i < numEquip; i++) {
-		for (unsigned int k = 0; k < numLocation; k++) {
+	for (int i = 0; i < numEquip; i++) {
+		for (int k = 0; k < numLocation; k++) {
 			file >> vecTemp[k];
 		}
 		matrixInstallCost[i] = vecTemp;
@@ -102,13 +104,13 @@ GQAP::GQAP(std::string& _fileName) {
 	
 	// Read Space Requirements of Equipment
 	vectorSpaceReq.resize(numEquip);
-	for (unsigned int i = 0; i < numEquip; i++) {
+	for (int i = 0; i < numEquip; i++) {
 		file >> vectorSpaceReq[i];
 	}
 	
 	// Read Space Capacity of Locations
 	vectorSpaceCap.resize(numLocation);
-	for (unsigned int k = 0; k < numLocation; k++) {
+	for (int k = 0; k < numLocation; k++) {
 		file >> vectorSpaceCap[k];
 	}
 	
@@ -120,6 +122,8 @@ GQAP::GQAP(std::string& _fileName) {
 	
 	installationPenalty   = maxInstallCost;
 	transportationPenalty = maxDist * maxFlow;
+	
+	UsedCapacity = std::vector<int>(numLocation, 0);
 }
 
 
@@ -218,7 +222,6 @@ void GQAP::printSolution() {
 
 void GQAP::fullEvaluation() {
 	// Full Problem Evaluation, Calcualtes Objective Value for Current Solution
-	// FIXME: Add Penalty Costs for exceeding Space Capacity at Locations
 	double totalCosts = 0;
 	double totalCostsWithOutPenalty = 0;
 	double totalInstallationCosts = 0;
@@ -226,13 +229,13 @@ void GQAP::fullEvaluation() {
 	double totalPenaltyCosts = 0;
 	
 	// Calculate Installation Costs
-	for (unsigned int i = 0; i < numEquip; i++) {
+	for (int i = 0; i < numEquip; i++) {
 		totalInstallationCosts = totalInstallationCosts + matrixInstallCost[i][solution[i]];
 	}
 	
 	// Calculate Transportation Costs
-	for (unsigned int i = 0; i < numEquip; i++) {
-		for (unsigned int j = i; j < numEquip; j++) {
+	for (int i = 0; i < numEquip; i++) {
+		for (int j = i; j < numEquip; j++) {
 			totalTransportationCosts = totalTransportationCosts 
 										+ matrixFlow[i][j] * matrixDist[solution[i]][solution[j]] 
 										+ matrixFlow[j][i] * matrixDist[solution[j]][solution[i]];
@@ -264,18 +267,36 @@ void GQAP::fullEvaluation() {
 }
 
 
-void GQAP::RandomInit() {
-	// Random Problem Initialization
-	for (unsigned int i = 0; i < numEquip; i++) {
-		solution[i] = rng.random(numLocation);
+void GQAP::CalculateCapacityViolations() {
+	// Calculates the number of Locations with violated capacity restrictions for Current Solution
+	// and the extend of the total violation over all locations for the current solution
+	
+	numViolatedLocations = 0;
+	numViolatedCapcityUnits = 0;
+	
+	// Calculate Capacity Requirements of each Location for Current Solution
+	std::vector<int> UsedCapacity(numLocation, 0);
+	for (int i = 0; i < numEquip; i++) {
+		UsedCapacity[solution[i]] += vectorSpaceReq[i];
 	}
+	
+	// Calculate Violation
+	int CapDelta = 0;
+	div_t divresult;
+	for (int k = 0; k < numLocation; k++) {
+		CapDelta = UsedCapacity[k] - vectorSpaceCap[k];
+		if (CapDelta > 0 ) {
+			divresult = div(UsedCapacity[k], vectorSpaceCap[k]);
+			numViolatedLocations =+ divresult.quot;
+			numViolatedCapcityUnits =+ CapDelta;
+		}
+	}
+	
+	/* // DEBUG
+	std::cout << "numViolatedLocations:     " << numViolatedLocations << std::endl;
+	std::cout << "numViolatedCapacityUnits: " << numViolatedCapcityUnits << std::endl;
+	// */
 }
-
-void GQAP::GRASPInit(double alpha) {
-	std::string str = "GQAP-Error: GRASP-Init not yet implemented!";
-	throw std::runtime_error(str);
-}
-
 
 
 void GQAP::CopyProblem(GQAP & _problem) {
@@ -298,30 +319,220 @@ void GQAP::CopyProblem(GQAP & _problem) {
 	// Copy Helper Variables
 	numViolatedCapcityUnits  = _problem.numViolatedCapcityUnits;
 	numViolatedLocations     = _problem.numViolatedLocations;
+	
+	installationPenalty	  = _problem.installationPenalty;
+	transportationPenalty = _problem.transportationPenalty;
+	
+	UsedCapacity = _problem.UsedCapacity;
 }
 
-void GQAP::CalculateCapacityViolations() {
-	// Calculates the number of Locations with violated capacity restrictions for Current Solution
-	// and the extend of the total violation over all locations for the current solution
+
+
+
+/* I N I T I A L I Z A T I O N S */
+
+void GQAP::RandomInit() {
+	// Random Problem Initialization
+	for (int i = 0; i < numEquip; i++) {
+		solution[i] = rng.random(numLocation);
+	}
+}
+
+
+void GQAP::GRASPInit(double alpha) {
+	// GRASP-Initialization using the provided alpa-value
 	
+	// Define a Vector holing the Restricted Candidate List with maximum size
+	std::vector<RCL_element> candidateList(numLocation*numEquip);
+	
+	// current Assignment
+	Assignment cAssign;
+	
+	// set the current solution to an undefined representation to distinguish it from valid partial solution
+	solution = std::vector<int>(numEquip, -1);
+	
+	// reset the values for capacity violations
 	numViolatedLocations = 0;
 	numViolatedCapcityUnits = 0;
 	
-	// Calculate Capacity Requirements of each Location for Current Solution
-	std::vector<unsigned int> UsedCapacity(numLocation, 0);
-	for (unsigned int i = 0; i < numEquip; i++) {
-		UsedCapacity[solution[i]] += vectorSpaceReq[i];
+	// Initialize the RCL
+	GRASPInitCandidateList(candidateList);
+	
+	// Add Assignments, until solution has been constructed
+	while (candidateList.size() > 0) {
+		GRASPAddAssignment_CostBased(candidateList, alpha);
+		GRASPUpdateCandidateList(candidateList);
 	}
 	
-	// Calculate Violation
-	int CapDelta = 0;
-	div_t divresult;
-	for (unsigned int k = 0; k < numLocation; k++) {
-		CapDelta = UsedCapacity[k] - vectorSpaceCap[k];
-		if (CapDelta > 0 ) {
-			divresult = div(UsedCapacity[k], vectorSpaceCap[k]);
-			numViolatedLocations =+ divresult.quot + 1;
-			numViolatedCapcityUnits =+ CapDelta;
+}
+
+
+void GQAP::GRASPInitCandidateList(std::vector<RCL_element>& _rcl) {
+	// Initialize the Candidate List
+	
+	// the list only considers installation costs,
+	// since to previous assignment is known and therefore no transportation is needed
+	double costs;
+	int idx = 0;
+	Assignment cAssign;
+	
+	// loop through all Equipment - Location Combinations
+	// and add them to the RCL with their respective installation costs
+	for (int i = 0; i < numEquip; i++) {
+		for (int k = 0; k < numLocation; k++) {
+			cAssign.first = i;
+			cAssign.second = k;
+			costs = matrixInstallCost[i][k];
+			_rcl[idx] = RCL_element(costs, cAssign);
+			idx++;
 		}
 	}
+}
+
+
+void GQAP::GRASPAddAssignment_CostBased(std::vector<RCL_element>& _rcl, double alpha) {
+	// randomly chooses an additional assignment to add to the solution and 
+	// removes other possible assignments for same equipment from the RCL
+	
+	// order the RCL by its costs values
+	std::sort(_rcl.begin(), _rcl.end());
+	
+	// select a member of the RCL randomly using the alpha-parameter
+	// while considering the cut-off cost for the RCL (value-based RCL)
+	double minCostIncrease = _rcl.front().first;
+	double maxCostIncrease = _rcl.back().first;
+	double maxRCLCost = minCostIncrease + alpha * (maxCostIncrease - minCostIncrease);
+	
+	// find first index of sorted RCL list element with higher then cut-off costs
+	// implementaion using std::upper_bound does not work b/c of type is 
+	// RCL_element and not astandard data type
+	int i = 0;
+	while (i < _rcl.size()) {
+		if(_rcl[i].first >= maxRCLCost) {
+			break;
+		} else {
+			i++;
+		}
+	}
+	
+	// choose an assignment from the resticted list randomly
+	int idxRCL = rng.random(i); 	// draw from [0,i)
+	int cEquipment = _rcl[idxRCL].second.first;
+	int cLocation  = _rcl[idxRCL].second.second;
+	
+	// add choosen assignment to solution
+	solution[cEquipment] = cLocation;
+	
+	// remove the selected Equipment from the RCL;
+	i = 0;
+	while (i < _rcl.size()) {
+		if (_rcl[i].second.first == cEquipment) {
+			_rcl.erase(_rcl.begin() + i);
+		} else {
+			i++;
+		}
+	}
+	
+	// update the capacity utilization after the new assignment
+	GRASPUpdateCapacityViolation(cEquipment, cLocation);
+}
+
+
+void GQAP::GRASPUpdateCapacityViolation(int Equipment, int Location) {
+	
+	// Update the effect of an added assignment on the violation of the constraints
+	int tempViolatedLocations = numViolatedLocations;
+	int tempViolatedCapacityUnits = numViolatedCapcityUnits;
+	std::vector<int> tempUsedCapacity = UsedCapacity;
+	
+	GRASPCalculateCapacityViolation(Equipment, Location, tempViolatedLocations, tempViolatedCapacityUnits, tempUsedCapacity);
+	
+	numViolatedLocations = tempViolatedLocations;
+	numViolatedCapcityUnits = tempViolatedCapacityUnits;
+	UsedCapacity = tempUsedCapacity;
+}
+
+
+void GQAP::GRASPCalculateCapacityViolation(int Equipment, int Location, int & _numViolatedLocations, int & _numViolatedCapcityUnits, std::vector<int> & _UsedCapacity) {
+	// Calculate the effect of an added assignment on the violations of the constraints
+	
+	// Calculate old numViolatedCapcityUnits of Location
+	div_t divresult_old;
+	divresult_old = div(_UsedCapacity[Location], vectorSpaceCap[Location]);
+	
+	
+	// Calculate new Capacity Requirement for Location of new Assignment
+	_UsedCapacity[Location] += vectorSpaceReq[Equipment];
+	
+	
+	// See if Capacity is violated, if so: update variables for penalty cost calculations
+	int CapDelta = _UsedCapacity[Location] - vectorSpaceCap[Location];
+	if (CapDelta > 0) {
+		div_t divresult_new;
+		divresult_new = div(_UsedCapacity[Location], vectorSpaceCap[Location]);
+		_numViolatedLocations =+  divresult_new.quot - divresult_old.quot;
+		_numViolatedCapcityUnits =+ CapDelta;
+	}
+	
+}
+
+
+void GQAP::GRASPUpdateCandidateList(std::vector<RCL_element>& _rcl) {
+	// now update the RCL of all possible assignments and calculate their 
+	// cost increase. In the latter aspect, this differs from the 
+	// initialization, where only installation cost was relevant
+	
+	double costs;
+	Assignment cAssign;
+	for (int i = 0; i < _rcl.size(); i++) {
+		cAssign.first  = _rcl[i].second.first;
+		cAssign.second = _rcl[i].second.second;
+		costs = GRASPCalculateCostIncrease(cAssign);
+		_rcl[i] = RCL_element(costs, cAssign);
+	}
+}
+
+
+double GQAP::GRASPCalculateCostIncrease(Assignment& _assign) {
+	// Calculates the increase in total costs for the given Assignment
+	double totalIncrease = 0.0;
+	double totalInstallationCostsIncrease   = 0.0;
+	double totalTransportationCostsIncrease = 0.0;
+	double totalPenaltyCostsIncrease = 0.0;
+	
+	int Equipment = _assign.first;
+	int Location  = _assign.second;
+	
+	// Calculate Increase in Installation Costs	
+	totalInstallationCostsIncrease = matrixInstallCost[Equipment][Location];
+	
+	
+	
+	// Calculate Increase in Transportation Costs
+	for (int i = 0; i < numEquip; i++) {
+		// consider only transportation to equipment which has already been assigned!
+		// thus, solution[i] != -1 --> solution[i]>= 0
+		if(solution[i] >= 0) { 
+			totalTransportationCostsIncrease = totalTransportationCostsIncrease
+												+ matrixFlow[i][Equipment] * matrixDist[solution[i]][Location]
+												+ matrixFlow[Equipment][i] * matrixDist[Location][solution[i]];
+		}
+	}
+	
+	// Calculate Increase in Penalty Costs	
+	int newNumViolatedLocations = numViolatedLocations;
+	int newNumViolatedCapcityUnits = numViolatedCapcityUnits;
+	std::vector<int> tmpUsedCapacity = UsedCapacity;
+	
+	GRASPCalculateCapacityViolation(Equipment, Location, newNumViolatedLocations, newNumViolatedCapcityUnits, tmpUsedCapacity);
+	
+	int deltaNumViolatedLocations    = newNumViolatedLocations    - numViolatedLocations;
+	int deltaNumViolatedCapcityUnits = newNumViolatedCapcityUnits - numViolatedCapcityUnits;
+	
+	totalPenaltyCostsIncrease = installationPenalty * deltaNumViolatedLocations
+							  +  transportationPenalty * deltaNumViolatedCapcityUnits * transportCost;
+
+	totalIncrease = totalInstallationCostsIncrease + totalPenaltyCostsIncrease + totalTransportationCostsIncrease;
+	
+	return totalIncrease;
 }

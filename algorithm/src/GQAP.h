@@ -97,14 +97,38 @@ private:
 	std::vector<int> vectorSpaceCap;
 	
 	// Helper Variables for Penalty Calculations
-	unsigned int numViolatedLocations;
+	double installationPenalty;
+	double transportationPenalty;
+	int numViolatedLocations;
 	double numViolatedCapcityUnits;
+	std::vector<int> UsedCapacity;
 	
 	// Convinience Fuctions for Fitness Calculations
 	void CalculateCapacityViolations();
 	
 	// Convinience Functions for Copying Parameters
 	void CopyProblem(GQAP & _problem);
+	
+	// Convinience Functions for GRASP-Initialization
+	
+	// Assigenment hols the Assignment of an Equipment to a Location
+	typedef std::pair<int, int> Assignment;
+	
+	// An Element of the Restricted Candidate List Adds a Cost-Function Value to an Assignment
+	typedef std::pair<double, Assignment> RCL_element;
+	
+	
+	void GRASPInitCandidateList(std::vector<RCL_element> & _rcl);
+	void GRASPUpdateCandidateList(std::vector<RCL_element> & _rcl);
+	void GRASPAddAssignment_CostBased(std::vector<RCL_element> & _rcl, double alpha);
+	void GRASPUpdateCapacityViolation(int Equipment, int Location);
+	double GRASPCalculateCostIncrease(Assignment & _assign);
+	void GRASPCalculateCapacityViolation(int Equipment, int Location, 
+										int & _numViolatedLocations, 
+										int & _numViolatedCapcityUnits, 
+										std::vector<int> & _UsedCapacity);
+	
+	
 };
 
 #endif
