@@ -2,7 +2,9 @@
 
 #include <iostream>
 #include <string>
+#include <time.h>
 #include "GQAP.h"
+
 
 int main(int argc, char* argv[]) {
 	try {
@@ -44,7 +46,7 @@ int main(int argc, char* argv[]) {
 		
 		
 		
-		GQAP.GRASPInit(0.2);
+		GQAP.GRASPInit(1);
 		std::cout << "Initial GRASP ";
 		GQAP.printSolution();
 		
@@ -53,6 +55,66 @@ int main(int argc, char* argv[]) {
 		GQAP.printFitness();
 		std::cout << std::endl << std::endl; 
 		
+		
+		
+		int maxTries = 10000000;
+		std::cout << "Testing Random vs. GRASP with Alpha = 1 (Should be similar to random) vs. GRASP with Alpha = 0.4 and pure Greedy (Alpha = 0)" << std::endl;
+		std::cout << "Doing " << maxTries << " runs." << std::endl << std::endl;
+		
+		double avgRandom = 0;
+		double avgGRASPRandom = 0;
+		double avgGreedy = 0;
+		double avgGRASP  = 0;
+		double solTime = 0;
+		clock_t t;
+		
+		std::cout << "Testing Random Init: ..." << std::endl;
+		t = clock();
+		for (int i = 0; i < maxTries; i++) {
+			GQAP.RandomInit();
+			GQAP.fullEvaluation();
+			avgRandom = avgRandom + GQAP.fitness() / maxTries;
+		}
+		t = clock() - t;
+		std::cout << "Average Fitness: " << avgRandom << std::endl;
+		std::cout << "Total Runtime: " << t * 1000 / (CLOCKS_PER_SEC) << " ms. ;  Avg. Runtime: " << (t * 1000000 / (CLOCKS_PER_SEC)) / maxTries << " µs" << std::endl<<std::endl; 
+		
+		
+		std::cout << "Testing Random Init with GRASP: ..." << std::endl;
+		t = clock();
+		for (int i = 0; i < maxTries; i++) {
+			GQAP.GRASPInit(1);
+			GQAP.fullEvaluation();
+			avgGRASPRandom = avgGRASPRandom + GQAP.fitness() / maxTries;
+		}
+		t = clock() - t;
+		std::cout << "Average Fitness: " << avgGRASPRandom << std::endl;
+		std::cout << "Total Runtime: " << t * 1000 / (CLOCKS_PER_SEC) << " ms. ;  Avg. Runtime: " << (t * 1000000 / (CLOCKS_PER_SEC)) / maxTries << " µs" << std::endl<<std::endl; 
+		
+		
+		std::cout << "Testing GRASP-Init: ..." << std::endl;
+		t = clock();
+		for (int i = 0; i < maxTries; i++) {
+			GQAP.GRASPInit(0.4);
+			GQAP.fullEvaluation();
+			avgGRASP = avgGRASP + GQAP.fitness() / maxTries;
+		}
+		t = clock() - t;
+		std::cout << "Average Fitness: " << avgGRASP << std::endl;
+		std::cout << "Total Runtime: " << t * 1000 / (CLOCKS_PER_SEC) << " ms. ;  Avg. Runtime: " << double((t * 1000000 / (CLOCKS_PER_SEC)) / maxTries) << " µs" << std::endl<<std::endl; 
+		
+		
+		std::cout << "Testing Greedy Init: ..." << std::endl;
+		t = clock();
+		for (int i = 0; i < maxTries; i++) {
+			GQAP.GRASPInit(0);
+			GQAP.fullEvaluation();
+			avgGreedy = avgGreedy + GQAP.fitness() / maxTries;
+		}
+		t = clock() - t;
+		std::cout << "Average Fitness: " << avgGreedy << std::endl;
+		std::cout << "Total Runtime: " << t * 1000 / (CLOCKS_PER_SEC) << " ms. ;  Avg. Runtime: " << (t * 1000000 / (CLOCKS_PER_SEC)) / maxTries << " µs" << std::endl<<std::endl; 
+		//*/
 	} 
 	catch(std::exception& e) {
 		std::cout << "Expectation cought: ";

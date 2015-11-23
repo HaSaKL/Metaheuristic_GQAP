@@ -387,6 +387,13 @@ void GQAP::GRASPInitCandidateList(std::vector<RCL_element>& _rcl) {
 			idx++;
 		}
 	}
+	
+	/*// DEBUG: Print RCL
+	for (int i=0; i < _rcl.size(); i++) {
+		std::cout << _rcl[i].second.first << " -> " << _rcl[i].second.second << ": " << _rcl[i].first << std::endl;
+	}
+	std::cout << std::endl<<std::endl;
+	//*/
 }
 
 
@@ -416,7 +423,7 @@ void GQAP::GRASPAddAssignment_CostBased(std::vector<RCL_element>& _rcl, double a
 	}
 	
 	// choose an assignment from the resticted list randomly
-	int idxRCL = rng.random(i); 	// draw from [0,i)
+	int idxRCL = rng.random(i+1); 	// draw from [0,i+1)
 	int cEquipment = _rcl[idxRCL].second.first;
 	int cLocation  = _rcl[idxRCL].second.second;
 	
@@ -435,6 +442,11 @@ void GQAP::GRASPAddAssignment_CostBased(std::vector<RCL_element>& _rcl, double a
 	
 	// update the capacity utilization after the new assignment
 	GRASPUpdateCapacityViolation(cEquipment, cLocation);
+	
+	/* // DEBUG Print choosen Assignment
+	std::cout << "MaxRCL Costs (cut-off if >= :" << maxRCLCost << std::endl;
+	std::cout << "Choosen Assignment: " << cEquipment << " -> " << cLocation << std::endl;
+	// */
 }
 
 
@@ -490,6 +502,14 @@ void GQAP::GRASPUpdateCandidateList(std::vector<RCL_element>& _rcl) {
 		costs = GRASPCalculateCostIncrease(cAssign);
 		_rcl[i] = RCL_element(costs, cAssign);
 	}
+	
+	/*// DEBUG Print Candidate List
+	std::cout << "New Candidate List " << std::endl;
+	for (int i=0; i < _rcl.size(); i++) {
+		std::cout << _rcl[i].second.first << " -> " << _rcl[i].second.second << ": " << _rcl[i].first << std::endl;
+	}
+	std::cout << std::endl<<std::endl;
+	//*/
 }
 
 
