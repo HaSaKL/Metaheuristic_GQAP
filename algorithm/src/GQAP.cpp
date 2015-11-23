@@ -342,26 +342,34 @@ void GQAP::RandomInit() {
 void GQAP::GRASPInit(double alpha) {
 	// GRASP-Initialization using the provided alpa-value
 	
-	// Define a Vector holing the Restricted Candidate List with maximum size
-	std::vector<RCL_element> candidateList(numLocation*numEquip);
+	// if Random-Initialization is choosen, then do random initialization, since it is much faster
+	// GRASP-Init with alpha = 0 is equal to random initialization
+	if (alpha == 1) {
+		RandomInit();
+		
+	// do GRASP-Init, if alpha > 0
+	} else {
+		// Define a Vector holing the Restricted Candidate List with maximum size
+		std::vector<RCL_element> candidateList(numLocation*numEquip);
 	
-	// current Assignment
-	Assignment cAssign;
+		// current Assignment
+		Assignment cAssign;
 	
-	// set the current solution to an undefined representation to distinguish it from valid partial solution
-	solution = std::vector<int>(numEquip, -1);
+		// set the current solution to an undefined representation to distinguish it from valid partial solution
+		solution = std::vector<int>(numEquip, -1);
 	
-	// reset the values for capacity violations
-	numViolatedLocations = 0;
-	numViolatedCapcityUnits = 0;
+		// reset the values for capacity violations
+		numViolatedLocations = 0;
+		numViolatedCapcityUnits = 0;
 	
-	// Initialize the RCL
-	GRASPInitCandidateList(candidateList);
+		// Initialize the RCL
+		GRASPInitCandidateList(candidateList);
 	
-	// Add Assignments, until solution has been constructed
-	while (candidateList.size() > 0) {
-		GRASPAddAssignment_CostBased(candidateList, alpha);
-		GRASPUpdateCandidateList(candidateList);
+		// Add Assignments, until solution has been constructed
+		while (candidateList.size() > 0) {
+			GRASPAddAssignment_CostBased(candidateList, alpha);
+			GRASPUpdateCandidateList(candidateList);
+		}
 	}
 	
 }
