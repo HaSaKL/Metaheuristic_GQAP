@@ -18,7 +18,7 @@ GQAP::GQAP() {
 	matrixInstallCost 	= std::vector<std::vector<double> >();
 	
 	numViolatedLocations 	= 0;
-	numViolatedCapcityUnits = 0;
+	numViolatedCapacityUnits = 0;
 	
 	UsedCapacity = std::vector<int>();
 }
@@ -198,6 +198,29 @@ double GQAP::GetMatrixInstallCost(int equipment, int location) const {
 	return matrixInstallCost[equipment][location];
 }
 
+const std::vector<int>& GQAP::GetUsedCapacity() const {
+	return UsedCapacity;
+}
+int GQAP::GetUsedCapacity(int location) const {
+	return UsedCapacity[location];
+}
+
+double GQAP::GetInstallationPenalty() const {
+	return installationPenalty;
+}
+
+double GQAP::GetTransportationPenalty() const {
+	return transportationPenalty;
+}
+
+int GQAP::GetNumViolatedLocations() const {
+	return numViolatedLocations;
+}
+
+double GQAP::GetNumViolatedCapacityUnits() const {
+	return numViolatedCapacityUnits;
+}
+
 
 
 // C O N V I N I E N C E   F U N C T I O N S
@@ -248,7 +271,7 @@ void GQAP::fullEvaluation() {
 	
 	// Calculate Penalty Costs
 	CalculateCapacityViolations();
-	totalPenaltyCosts = numViolatedLocations * installationPenalty + transportCost * numViolatedCapcityUnits * transportationPenalty;
+	totalPenaltyCosts = numViolatedLocations * installationPenalty + transportCost * numViolatedCapacityUnits * transportationPenalty;
 	
 	// Calculate Total Costs
 	totalCosts = totalCostsWithOutPenalty + totalPenaltyCosts;
@@ -272,7 +295,7 @@ void GQAP::CalculateCapacityViolations() {
 	// and the extend of the total violation over all locations for the current solution
 	
 	numViolatedLocations = 0;
-	numViolatedCapcityUnits = 0;
+	numViolatedCapacityUnits = 0;
 	
 	// Calculate Capacity Requirements of each Location for Current Solution
 	std::vector<int> UsedCapacity(numLocation, 0);
@@ -288,7 +311,7 @@ void GQAP::CalculateCapacityViolations() {
 		if (CapDelta > 0 ) {
 			divresult = div(UsedCapacity[k], vectorSpaceCap[k]);
 			numViolatedLocations =+ divresult.quot;
-			numViolatedCapcityUnits =+ CapDelta;
+			numViolatedCapacityUnits =+ CapDelta;
 		}
 	}
 	
@@ -317,7 +340,7 @@ void GQAP::CopyProblem(GQAP & _problem) {
 	}
 	
 	// Copy Helper Variables
-	numViolatedCapcityUnits  = _problem.numViolatedCapcityUnits;
+	numViolatedCapacityUnits  = _problem.numViolatedCapacityUnits;
 	numViolatedLocations     = _problem.numViolatedLocations;
 	
 	installationPenalty	  = _problem.installationPenalty;
@@ -360,7 +383,7 @@ void GQAP::GRASPInit(double alpha) {
 	
 		// reset the values for capacity violations
 		numViolatedLocations = 0;
-		numViolatedCapcityUnits = 0;
+		numViolatedCapacityUnits = 0;
 	
 		// Initialize the RCL
 		GRASPInitCandidateList(candidateList);
@@ -462,13 +485,13 @@ void GQAP::GRASPUpdateCapacityViolation(int Equipment, int Location) {
 	
 	// Update the effect of an added assignment on the violation of the constraints
 	int tempViolatedLocations = numViolatedLocations;
-	int tempViolatedCapacityUnits = numViolatedCapcityUnits;
+	int tempViolatedCapacityUnits = numViolatedCapacityUnits;
 	std::vector<int> tempUsedCapacity = UsedCapacity;
 	
 	GRASPCalculateCapacityViolation(Equipment, Location, tempViolatedLocations, tempViolatedCapacityUnits, tempUsedCapacity);
 	
 	numViolatedLocations = tempViolatedLocations;
-	numViolatedCapcityUnits = tempViolatedCapacityUnits;
+	numViolatedCapacityUnits = tempViolatedCapacityUnits;
 	UsedCapacity = tempUsedCapacity;
 }
 
@@ -549,13 +572,13 @@ double GQAP::GRASPCalculateCostIncrease(Assignment& _assign) {
 	
 	// Calculate Increase in Penalty Costs	
 	int newNumViolatedLocations = numViolatedLocations;
-	int newNumViolatedCapcityUnits = numViolatedCapcityUnits;
+	int newNumViolatedCapcityUnits = numViolatedCapacityUnits;
 	std::vector<int> tmpUsedCapacity = UsedCapacity;
 	
 	GRASPCalculateCapacityViolation(Equipment, Location, newNumViolatedLocations, newNumViolatedCapcityUnits, tmpUsedCapacity);
 	
 	int deltaNumViolatedLocations    = newNumViolatedLocations    - numViolatedLocations;
-	int deltaNumViolatedCapcityUnits = newNumViolatedCapcityUnits - numViolatedCapcityUnits;
+	int deltaNumViolatedCapcityUnits = newNumViolatedCapcityUnits - numViolatedCapacityUnits;
 	
 	totalPenaltyCostsIncrease = installationPenalty * deltaNumViolatedLocations
 							  +  transportationPenalty * deltaNumViolatedCapcityUnits * transportCost;

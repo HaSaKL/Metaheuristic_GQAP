@@ -57,6 +57,14 @@ public:
 	const std::vector<int>& GetVectorSpaceCap() const;
 	int GetVectorSpaceCap(int location) const;
 		
+	const std::vector<int>& GetUsedCapacity	() const;
+	int GetUsedCapacity(int location) const;
+	
+	double GetInstallationPenalty() const;
+	double GetTransportationPenalty() const;
+	int GetNumViolatedLocations () const;
+	double GetNumViolatedCapacityUnits() const;
+	
 	
 	// Convinience Functions
 	void printSolution();
@@ -100,7 +108,7 @@ private:
 	double installationPenalty;
 	double transportationPenalty;
 	int numViolatedLocations;
-	double numViolatedCapcityUnits;
+	double numViolatedCapacityUnits;
 	std::vector<int> UsedCapacity;
 	
 	// Convinience Fuctions for Fitness Calculations
