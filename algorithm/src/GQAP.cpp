@@ -298,7 +298,7 @@ void GQAP::CalculateCapacityViolations() {
 	numViolatedCapacityUnits = 0;
 	
 	// Calculate Capacity Requirements of each Location for Current Solution
-	std::vector<int> UsedCapacity(numLocation, 0);
+	UsedCapacity = std::vector<int>(numLocation, 0);
 	for (int i = 0; i < numEquip; i++) {
 		UsedCapacity[solution[i]] += vectorSpaceReq[i];
 	}
@@ -316,8 +316,12 @@ void GQAP::CalculateCapacityViolations() {
 	}
 	
 	/* // DEBUG
+	std::cout << "Called CalculateCapacityViolation() " << std::endl;
 	std::cout << "numViolatedLocations:     " << numViolatedLocations << std::endl;
-	std::cout << "numViolatedCapacityUnits: " << numViolatedCapcityUnits << std::endl;
+	std::cout << "numViolatedCapacityUnits: " << numViolatedCapacityUnits << std::endl;
+	for(int k = 0; k < numLocation; k++) {
+		std::cout << "Cap used @ location " << k << ": " << UsedCapacity[k] << std::endl;
+	}
 	// */
 }
 
