@@ -81,7 +81,7 @@ double GQAP_ElementFlip_IncrEval::CalculateIncrCosts (int equipment, int newLoca
 	
 	int deltaNumViolatedCapacityUnits = 
 						CapViolationNewLocNewSol - CapViolationNewLocOldSol 
-						+ CapViolationOldLocOldSol - CapViolationOldLocNewSol;
+						- CapViolationOldLocOldSol + CapViolationOldLocNewSol;
 	
 	double IncrPenalty = deltaNumViolatedLocations * _problem->GetInstallationPenalty()
 				 + deltaNumViolatedCapacityUnits * _problem->GetTransportationPenalty() * _problem->GetTransportCost();
