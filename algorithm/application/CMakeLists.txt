@@ -8,3 +8,7 @@ target_link_libraries(TEST_READ lGQAP)
 add_executable(TEST_EVAL test_Evaluation.cpp)
 target_link_libraries(TEST_EVAL ${PARADISEO_LIBRARIES})
 target_link_libraries(TEST_EVAL lGQAP)
+
+add_executable(TEST_ELMFLIP test_ElementFlip_Neighborhood.cpp)
+target_link_libraries(TEST_ELMFLIP ${PARADISEO_LIBRARIES})
+target_link_libraries(TEST_ELMFLIP lGQAP)
