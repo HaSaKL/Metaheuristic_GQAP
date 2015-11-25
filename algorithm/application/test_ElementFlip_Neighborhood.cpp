@@ -58,7 +58,7 @@ int main(int argc, char* argv[]) {
 		std::cout << "Fitness of neighbor: " << n1.fitness() << std::endl;		
 		std::cout << "has another Neighbor: " << nh_Flip.hasNeighbor(p) << std::endl << std::endl;
 	
-		/*while(nh_Flip.cont(p)) {
+		while(nh_Flip.cont(p)) {
 			nh_Flip.next(p,n1);
 			std::cout << "Position: " << nh_Flip.position() << std::endl;
 			IncrEval(p,n1);
@@ -66,6 +66,12 @@ int main(int argc, char* argv[]) {
 			std::cout << "has another Neighbor: " << nh_Flip.cont(p) << std::endl << std::endl;
 		}
 		//*/
+		
+		n1.move(p);
+		p.printSolution();
+		p.printFitness();
+		FullEval(p);
+		p.printFitness();
 	}
 	catch(std::exception& e) {
 		std::cout << "Expectation cought: ";
