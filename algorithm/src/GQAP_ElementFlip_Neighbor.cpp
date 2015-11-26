@@ -6,16 +6,28 @@ void GQAP_ElementFlipIndex_Neighbor::move(GQAP& _solution) {
 	// translate index key to a specific move
 	translate(key, _solution);
 	
+	/*// DEBUG
+	std::cout << "Current Solution: ";
+	_solution.printSolution();
+	//*/
+	
 	// execute this move
-	// FIXME: Update Any Capacity Restrictions?!
-	
 	_solution[EquipmentToLocation.first] = EquipmentToLocation.second;
-	
 	_solution.CalculateCapacityViolations();
-	
 	_solution.fitness(this->fitness());
 	
-	//_solution.invalidate();
+	/*// DEBUG
+	_solution.fullEvaluation();
+	if (_solution.fitness() != this->fitness()) {
+		std::cout << "New Solution:     ";
+		_solution.printSolution();
+		
+		_solution.printFitness();
+		std::cout << "vs. " << fitness() << std::endl;
+		std::cout << "Delta: " << _solution.fitness() - this->fitness() << std::endl;
+		throw std::runtime_error("Error in Incremental Evaluation");
+	}
+	// */
 }
 
 void GQAP_ElementFlipIndex_Neighbor::translate(unsigned int _key, GQAP & _solution) {
