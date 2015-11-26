@@ -271,7 +271,8 @@ void GQAP::fullEvaluation() {
 	
 	// Calculate Penalty Costs
 	CalculateCapacityViolations();
-	totalPenaltyCosts = numViolatedLocations * installationPenalty + transportCost * numViolatedCapacityUnits * transportationPenalty;
+	totalPenaltyCosts = numViolatedLocations * installationPenalty 
+						+ transportCost * numViolatedCapacityUnits * transportationPenalty;
 	
 	// Calculate Total Costs
 	totalCosts = totalCostsWithOutPenalty + totalPenaltyCosts;
@@ -319,8 +320,8 @@ void GQAP::CalculateCapacityViolations() {
 			// two additional locations
 			divresult = div(UsedCapacity[k]-1, vectorSpaceCap[k]);
 			
-			numViolatedLocations =+ divresult.quot;
-			numViolatedCapacityUnits =+ CapDelta;
+			numViolatedLocations = numViolatedLocations + divresult.quot;
+			numViolatedCapacityUnits = numViolatedCapacityUnits + CapDelta;
 		}
 	}
 	
