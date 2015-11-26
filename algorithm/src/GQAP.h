@@ -34,7 +34,6 @@ public:
 
 
 
-
 	// Getter and Setter Methods
 	int GetNumLocation() const;
 
@@ -74,6 +73,9 @@ public:
 	void fullEvaluation();
 	void RandomInit();
 	void GRASPInit(double alpha);
+	
+	// Convinience Fuctions for Fitness Calculations
+	void CalculateCapacityViolations();
 
 
 private:
@@ -110,9 +112,6 @@ private:
 	int numViolatedLocations;
 	double numViolatedCapacityUnits;
 	std::vector<int> UsedCapacity;
-
-	// Convinience Fuctions for Fitness Calculations
-	void CalculateCapacityViolations();
 
 	// Convinience Functions for Copying Parameters
 	void CopyProblem(GQAP & _problem);
