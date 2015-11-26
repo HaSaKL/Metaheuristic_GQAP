@@ -60,8 +60,8 @@ double GQAP_ElementFlip_IncrEval::CalculateIncrCosts (int equipment, int newLoca
 	// Calculate the Change in Penalty Costs	
 	// first calucate the amount of capacity violations for old and new assignment @ old and new location
 	int dummy;
+	
 	dummy = _problem->GetVectorSpaceCap(oldLocation) - _problem->GetUsedCapacity(oldLocation);
-	std::cout << "SpaceCap(" << _problem->GetVectorSpaceCap(oldLocation) << ") - SpaceUsed(" << _problem->GetUsedCapacity(oldLocation) << ") = CapViolation(" << dummy * (dummy < 0) * -1 << ")" << std::endl;
 	int CapViolationOldLocOldSol = dummy * (dummy < 0) * -1;
 	
 	dummy = _problem->GetVectorSpaceCap(oldLocation) - _problem->GetUsedCapacity(oldLocation) + _problem->GetVectorSpaceReq(equipment);
