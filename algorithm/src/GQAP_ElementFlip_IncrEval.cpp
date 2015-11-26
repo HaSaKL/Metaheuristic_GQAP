@@ -17,9 +17,9 @@ void GQAP_ElementFlip_IncrEval::operator() (GQAP_ElementFlipIndex_Neighbor::EOT 
 	_neighbor.getMove(equipment, newLocation, _solution);
 	oldLocation = _problem -> solution[equipment];
 	
-	// DEBUG OUTPUT
+	/*// DEBUG OUTPUT
 	std::cout << "Move Equipment " << equipment << " from location " << oldLocation << " to " << newLocation << std::endl;
-	/*std::cout << "Old Solution Value: " << _solution.fitness() << std::endl;
+	std::cout << "Old Solution Value: " << _solution.fitness() << std::endl;
 	std::cout << "Increase:           " << incrTotal << std::endl;
 	std::cout << "New Solution Value: " << _solution.fitness() + incrTotal << std::endl << std::endl;
 	// */
@@ -58,7 +58,7 @@ double GQAP_ElementFlip_IncrEval::CalculateIncrCosts (int equipment, int newLoca
 	}
 	
 	// Calculate the Change in Penalty Costs	
-	// first calucate the amount of capacitty violations for old and new assignment @ old and new location
+	// first calucate the amount of capacity violations for old and new assignment @ old and new location
 	int dummy;
 	dummy = _problem->GetVectorSpaceCap(oldLocation) - _problem->GetUsedCapacity(oldLocation);
 	std::cout << "SpaceCap(" << _problem->GetVectorSpaceCap(oldLocation) << ") - SpaceUsed(" << _problem->GetUsedCapacity(oldLocation) << ") = CapViolation(" << dummy * (dummy < 0) * -1 << ")" << std::endl;
@@ -73,33 +73,50 @@ double GQAP_ElementFlip_IncrEval::CalculateIncrCosts (int equipment, int newLoca
 	dummy = _problem->GetVectorSpaceCap(newLocation) - _problem->GetUsedCapacity(newLocation) - _problem->GetVectorSpaceReq(equipment);
 	int CapViolationNewLocNewSol = dummy * (dummy < 0) * -1;
 	
-	
-	// calculate the change in the number of violated locations and of violated capacity units
-	int deltaNumViolatedLocations = 
-						(CapViolationNewLocNewSol > 0) - (CapViolationNewLocOldSol > 0)
-						- (CapViolationOldLocOldSol > 0) + (CapViolationOldLocNewSol > 0);
-	
+	// calculate the number of violated capacity units
 	int deltaNumViolatedCapacityUnits = 
 						CapViolationNewLocNewSol - CapViolationNewLocOldSol 
-						- CapViolationOldLocOldSol + CapViolationOldLocNewSol;
+						+ (CapViolationOldLocNewSol - CapViolationOldLocOldSol);
+	
+	// calculate the change in the number of violated locations using INTEGER devision on POSIVIE numbers only
+	// substract one from Used Capacity b/c otherwiese more locations will be flagged as violated
+	// e.g.: Location Capacity = 20, Used Capacity = 20 --> 20/20 = 1 but there is no violation
+	// same holds true for 40/20 = 2 but there should be only one violation, since there is enough space
+	// in the original + the additional location installation
+	// this seems like a quick and dirty fix, but sinde capacity is inter-valued this works well
+	int LocViolationOldLocOldSol = (_problem->GetUsedCapacity(oldLocation)-1) / _problem->GetVectorSpaceCap(oldLocation);
+	int LocViolationOldLocNewSol = (_problem->GetUsedCapacity(oldLocation)-1 - _problem->GetVectorSpaceReq(equipment)) / _problem->GetVectorSpaceCap(oldLocation);
+	int LocViolationNewLocOldSol = (_problem->GetUsedCapacity(newLocation)-1)/ _problem->GetVectorSpaceCap(newLocation);
+	int LocViolationNewLocNewSol = (_problem->GetUsedCapacity(newLocation)-1 + _problem->GetVectorSpaceReq(equipment)) / _problem->GetVectorSpaceCap(newLocation);
+	int deltaNumViolatedLocations = 
+						LocViolationNewLocNewSol - LocViolationNewLocOldSol
+						+ (LocViolationOldLocNewSol - LocViolationOldLocOldSol);
+	
+	
 	
 	double IncrPenalty = deltaNumViolatedLocations * _problem->GetInstallationPenalty()
 				 + deltaNumViolatedCapacityUnits * _problem->GetTransportationPenalty() * _problem->GetTransportCost();
 	
 	double TotalIncr = IncrInstall + IncrTransport * _problem->GetTransportCost() + IncrPenalty;
 	
-	// DEBUG OUTPUT
+	/*// DEBUG OUTPUT
 	std::cout << "CapViolation Old Loc New Sol:       " << CapViolationOldLocNewSol << std::endl;
 	std::cout << "CapViolation Old Loc Old Sol:       " << CapViolationOldLocOldSol << std::endl;
 	std::cout << "CapViolation New Loc New Sol:       " << CapViolationNewLocNewSol << std::endl;
 	std::cout << "CapViolation New Loc Old Sol:       " << CapViolationNewLocOldSol << std::endl;
-	
+	std::cout << std::endl;
+	std::cout << "LocViolation Old Loc New Sol:       " << LocViolationOldLocNewSol << std::endl;
+	std::cout << "LocViolation Old Loc Old Sol:       " << LocViolationOldLocOldSol << std::endl;
+	std::cout << "LocViolation New Loc New Sol:       " << LocViolationNewLocNewSol << std::endl;
+	std::cout << "LocViolation New Loc Old Sol:       " << LocViolationNewLocOldSol << std::endl;
+	std::cout << std::endl;
 	std::cout << "Delta Number of Violated Locations: " << deltaNumViolatedLocations << std::endl;
 	std::cout << "Delta Number of Violated Cap Units: " << deltaNumViolatedCapacityUnits << std::endl;
-	
+	std::cout << std::endl;
 	std::cout << "Transporation Penalty:              " << _problem->GetTransportationPenalty() << std::endl;;
 	std::cout << "Installation Penalty:               " << _problem->GetInstallationPenalty() << std::endl;;
 	std::cout << "Transportation Costs:               " << _problem->GetTransportCost() << std::endl;;
+	std::cout << std::endl;
 	std::cout << "Resulting Incr in Penalty Costs:    " << IncrPenalty << std::endl;;
 	std::cout << "Incr in Installation Costs:         " << IncrInstall << std::endl;;
 	std::cout << "Incr in Transport Flow:             " << IncrTransport << std::endl;;
