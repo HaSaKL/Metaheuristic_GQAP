@@ -309,7 +309,16 @@ void GQAP::CalculateCapacityViolations() {
 	for (int k = 0; k < numLocation; k++) {
 		CapDelta = UsedCapacity[k] - vectorSpaceCap[k];
 		if (CapDelta > 0 ) {
-			divresult = div(UsedCapacity[k], vectorSpaceCap[k]);
+			// if condition is important not only for adding the right amount to numViolatedCapacityUnits
+			// but aĺso for making sure the right number of violated locations is added
+			// problematic would be CapDelta = 0 -> in this case there would still be one violated location
+			
+			// substract one from UsedCapacity to make sure that only one location is added to
+			// numViolatedLocations if e.g. UsedCap = 40 and avaiable Space is 20 --> this could 
+			// fit in the original and one additional location, but intger diff would result in
+			// two additional locations
+			divresult = div(UsedCapacity[k]-1, vectorSpaceCap[k]);
+			
 			numViolatedLocations =+ divresult.quot;
 			numViolatedCapacityUnits =+ CapDelta;
 		}
