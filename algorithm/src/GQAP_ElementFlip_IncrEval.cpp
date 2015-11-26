@@ -17,15 +17,16 @@ void GQAP_ElementFlip_IncrEval::operator() (GQAP_ElementFlipIndex_Neighbor::EOT 
 	_neighbor.getMove(equipment, newLocation, _solution);
 	oldLocation = _problem -> solution[equipment];
 	
+	// Calculate Cost Increase
+	double incrTotal = 0;
+	incrTotal = CalculateIncrCosts(equipment, newLocation, oldLocation);
+	
 	/*// DEBUG OUTPUT
 	std::cout << "Move Equipment " << equipment << " from location " << oldLocation << " to " << newLocation << std::endl;
 	std::cout << "Old Solution Value: " << _solution.fitness() << std::endl;
 	std::cout << "Increase:           " << incrTotal << std::endl;
 	std::cout << "New Solution Value: " << _solution.fitness() + incrTotal << std::endl << std::endl;
 	// */
-	
-	// Calculate Cost Increase
-	double incrTotal = CalculateIncrCosts(equipment, newLocation, oldLocation);
 	
 	// Set new Costs
 	_neighbor.fitness(_solution.fitness() + incrTotal);
@@ -47,31 +48,31 @@ double GQAP_ElementFlip_IncrEval::CalculateIncrCosts (int equipment, int newLoca
 		if (i != equipment) {
 			IncrTransport = IncrTransport
 							+ _problem -> GetMatrixFlow(i,equipment) * 
-								(_problem -> GetMatrixDist(_problem -> solution[i],newLocation)		// add flow to new location
-								 -_problem -> GetMatrixDist(_problem -> solution[i],oldLocation)	// substract flow to old location
+								(_problem -> GetMatrixDist(_problem->solution[i],newLocation)	// add flow to new location
+								 -_problem -> GetMatrixDist(_problem->solution[i],oldLocation)	// substract flow to old location
 								 )
 							+ _problem -> GetMatrixFlow(equipment,i) * 
-								(_problem -> GetMatrixDist(newLocation,_problem -> solution[i]) 	// add flow from new location
-								- _problem -> GetMatrixDist(oldLocation,_problem -> solution[i]) // substract flow from old location
+								(_problem -> GetMatrixDist(newLocation,_problem->solution[i])  // add flow from new location
+								- _problem -> GetMatrixDist(oldLocation,_problem->solution[i]) // substract flow from old location
 								 );
 		}
 	}
 	
 	// Calculate the Change in Penalty Costs	
 	// first calucate the amount of capacity violations for old and new assignment @ old and new location
-	int dummy;
+	int deltaCap;
 	
-	dummy = _problem->GetVectorSpaceCap(oldLocation) - _problem->GetUsedCapacity(oldLocation);
-	int CapViolationOldLocOldSol = dummy * (dummy < 0) * -1;
+	deltaCap = _problem->GetVectorSpaceCap(oldLocation) - _problem->GetUsedCapacity(oldLocation);
+	int CapViolationOldLocOldSol = deltaCap * (deltaCap < 0) * -1;
 	
-	dummy = _problem->GetVectorSpaceCap(oldLocation) - _problem->GetUsedCapacity(oldLocation) + _problem->GetVectorSpaceReq(equipment);
-	int CapViolationOldLocNewSol = dummy * (dummy < 0) * -1;
+	deltaCap = _problem->GetVectorSpaceCap(oldLocation) - _problem->GetUsedCapacity(oldLocation) + _problem->GetVectorSpaceReq(equipment);
+	int CapViolationOldLocNewSol = deltaCap * (deltaCap < 0) * -1;
 	
-	dummy = _problem->GetVectorSpaceCap(newLocation) - _problem->GetUsedCapacity(newLocation);
-	int CapViolationNewLocOldSol = dummy * (dummy < 0) * -1;
+	deltaCap = _problem->GetVectorSpaceCap(newLocation) - _problem->GetUsedCapacity(newLocation);
+	int CapViolationNewLocOldSol = deltaCap * (deltaCap < 0) * -1;
 	
-	dummy = _problem->GetVectorSpaceCap(newLocation) - _problem->GetUsedCapacity(newLocation) - _problem->GetVectorSpaceReq(equipment);
-	int CapViolationNewLocNewSol = dummy * (dummy < 0) * -1;
+	deltaCap = _problem->GetVectorSpaceCap(newLocation) - _problem->GetUsedCapacity(newLocation) - _problem->GetVectorSpaceReq(equipment);
+	int CapViolationNewLocNewSol = deltaCap * (deltaCap < 0) * -1;
 	
 	// calculate the number of violated capacity units
 	int deltaNumViolatedCapacityUnits = 
@@ -84,7 +85,7 @@ double GQAP_ElementFlip_IncrEval::CalculateIncrCosts (int equipment, int newLoca
 	// same holds true for 40/20 = 2 but there should be only one violation, since there is enough space
 	// in the original + the additional location installation
 	// this seems like a quick and dirty fix, but sinde capacity is inter-valued this works well
-	int LocViolationOldLocOldSol = (_problem->GetUsedCapacity(oldLocation)-1) / _problem->GetVectorSpaceCap(oldLocation);
+	int LocViolationOldLocOldSol = (_problem->GetUsedCapacity(oldLocation)-1)/ _problem->GetVectorSpaceCap(oldLocation);
 	int LocViolationOldLocNewSol = (_problem->GetUsedCapacity(oldLocation)-1 - _problem->GetVectorSpaceReq(equipment)) / _problem->GetVectorSpaceCap(oldLocation);
 	int LocViolationNewLocOldSol = (_problem->GetUsedCapacity(newLocation)-1)/ _problem->GetVectorSpaceCap(newLocation);
 	int LocViolationNewLocNewSol = (_problem->GetUsedCapacity(newLocation)-1 + _problem->GetVectorSpaceReq(equipment)) / _problem->GetVectorSpaceCap(newLocation);
@@ -117,6 +118,8 @@ double GQAP_ElementFlip_IncrEval::CalculateIncrCosts (int equipment, int newLoca
 	std::cout << "Installation Penalty:               " << _problem->GetInstallationPenalty() << std::endl;;
 	std::cout << "Transportation Costs:               " << _problem->GetTransportCost() << std::endl;;
 	std::cout << std::endl;
+	std::cout << "Penalty for Location Violation:     " << deltaNumViolatedLocations * _problem->GetInstallationPenalty() << std::endl;
+	std::cout << "Penalty for Cap. Unit Violations:   " << deltaNumViolatedCapacityUnits * _problem->GetTransportationPenalty() * _problem->GetTransportCost() << std::endl;
 	std::cout << "Resulting Incr in Penalty Costs:    " << IncrPenalty << std::endl;;
 	std::cout << "Incr in Installation Costs:         " << IncrInstall << std::endl;;
 	std::cout << "Incr in Transport Flow:             " << IncrTransport << std::endl;;
