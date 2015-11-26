@@ -10,8 +10,12 @@ void GQAP_ElementFlipIndex_Neighbor::move(GQAP& _solution) {
 	// FIXME: Update Any Capacity Restrictions?!
 	
 	_solution[EquipmentToLocation.first] = EquipmentToLocation.second;
-	_solution.invalidate();
 	
+	_solution.CalculateCapacityViolations();
+	
+	_solution.fitness(this->fitness());
+	
+	//_solution.invalidate();
 }
 
 void GQAP_ElementFlipIndex_Neighbor::translate(unsigned int _key, GQAP & _solution) {
