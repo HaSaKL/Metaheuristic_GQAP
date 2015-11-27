@@ -8,6 +8,11 @@ set (GQAP_SOURCES
 			
 			GQAP_ElementFlip_Neighbor.cpp
 			GQAP_ElementFlip_IncrEval.cpp
+			
+			GRASP_Alpha.h
+			GRASP_FixedAlpha.cpp
+			GRASP_UniformRandomAlpha.cpp
+			GRASP_ReactiveAlpha.cpp
 		)
 				
 set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
