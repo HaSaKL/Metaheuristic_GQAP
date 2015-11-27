@@ -6,6 +6,9 @@
 #include <eo>
 #include <neighborhood/moRndWithoutReplNeighborhood.h>
 #include <algo/moFirstImprHC.h>
+#include <algo/moRandomBestHC.h>
+#include <algo/moSimpleHC.h>
+#include <algo/moNeutralHC.h>
 
 // Problem Specific headers
 #include "GQAP.h"
@@ -41,20 +44,22 @@ int main(int argc, char* argv[]) {
 		// define neighborhood
 		moRndWithoutReplNeighborhood<GQAP_ElementFlipIndex_Neighbor> nh_Flip(NeighborhoodSize);
 		
-		// define heuristic
-		moFirstImprHC<GQAP_ElementFlipIndex_Neighbor> HC_Algo(nh_Flip, FullEval, IncrEval);
+		// define heuristics
+		moRandomBestHC<GQAP_ElementFlipIndex_Neighbor> HC_Algo_Random(nh_Flip, FullEval, IncrEval);
+		moFirstImprHC<GQAP_ElementFlipIndex_Neighbor> HC_Algo_First(nh_Flip, FullEval, IncrEval);
+		moNeutralHC<GQAP_ElementFlipIndex_Neighbor> HC_Algo_Neutral(nh_Flip, FullEval, IncrEval, NeighborhoodSize * 10);
 		
 		
 		// do the search
 		clock_t t;
 		
-		int maxIt = 5000;
+		int maxIt = 1000;
 		p.RandomInit();
 		FullEval(p);
 		double bestSol = p.fitness();
 		double currSol = bestSol;
 		
-		std::cout << "Starting search, best known solution: " << bestSol << std::endl;
+		std::cout << "Starting search, best known solution using Random Best HC with Random NH: " << bestSol << std::endl;
 		
 		t = clock();
 		for (int i = 0; i < maxIt; i++) {
@@ -65,7 +70,79 @@ int main(int argc, char* argv[]) {
 			FullEval(p);
 		
 			// Improve Soluition using HC-Algorithm
-			HC_Algo(p);
+			HC_Algo_Random(p);
+			
+			currSol = p.fitness();
+			
+			//std::cout << currSol << std::endl;
+			
+			// Check if new best sol has been found
+			if (currSol < bestSol) {
+				bestSol = currSol;
+				std::cout << "New Best Solution found in Iteration " << i << ": " << bestSol << std::endl;
+			}
+		}
+		
+		t = clock() - t;
+		std::cout << "Finished all " << maxIt << " Iterations in " << double(t) * 1000 / (CLOCKS_PER_SEC) << " ms" << std::endl;
+		std::cout << "Best Solution found: " << bestSol << std::endl;
+		
+		
+		
+		maxIt = 1000;
+		p.RandomInit();
+		FullEval(p);
+		bestSol = p.fitness();
+		currSol = bestSol;
+		
+		std::cout << "Starting search, best known solution using First Best HC with Random NH: " << bestSol << std::endl;
+		
+		t = clock();
+		for (int i = 0; i < maxIt; i++) {
+			//std::cout << i << ": ";
+			
+			// Initialize Solution Randomly
+			p.RandomInit();
+			FullEval(p);
+		
+			// Improve Soluition using HC-Algorithm
+			HC_Algo_First(p);
+			
+			currSol = p.fitness();
+			
+			//std::cout << currSol << std::endl;
+			
+			// Check if new best sol has been found
+			if (currSol < bestSol) {
+				bestSol = currSol;
+				std::cout << "New Best Solution found in Iteration " << i << ": " << bestSol << std::endl;
+			}
+		}
+		
+		t = clock() - t;
+		std::cout << "Finished all " << maxIt << " Iterations in " << double(t) * 1000 / (CLOCKS_PER_SEC) << " ms" << std::endl;
+		std::cout << "Best Solution found: " << bestSol << std::endl;
+		
+		
+		
+		maxIt = 1000;
+		p.RandomInit();
+		FullEval(p);
+		bestSol = p.fitness();
+		currSol = bestSol;
+		
+		std::cout << "Starting search, best known solution using Neutral HC with Random NH: " << bestSol << std::endl;
+		
+		t = clock();
+		for (int i = 0; i < maxIt; i++) {
+			//std::cout << i << ": ";
+			
+			// Initialize Solution Randomly
+			p.RandomInit();
+			FullEval(p);
+		
+			// Improve Soluition using HC-Algorithm
+			HC_Algo_Neutral(p);
 			
 			currSol = p.fitness();
 			
