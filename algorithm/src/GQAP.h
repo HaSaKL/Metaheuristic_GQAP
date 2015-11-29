@@ -13,7 +13,7 @@ public:
 	// actual representation of the problems solution using
 	// an integer vector representing for each equipment
 	// its assignment to a location
-	std::vector<int> solution;
+	eoVector<eoMinimizingFitness, int> solution;
 
 	// FIXME: Idea: Add Problem Filename so a better solution could be saved to the problem file!
 

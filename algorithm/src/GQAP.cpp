@@ -3,7 +3,7 @@
 /* C O N S T R U C T O R S    +     D E S T R U C T O R S*/
 // Default Constructor
 GQAP::GQAP() {
-	solution = std::vector<int>();
+	eoVector<eoMinimizingFitness, int>(0,0);
 	
 	transportCost = 1;
 	
@@ -393,7 +393,8 @@ void GQAP::GRASPInit(double alpha) {
 		Assignment cAssign;
 	
 		// set the current solution to an undefined representation to distinguish it from valid partial solution
-		solution = std::vector<int>(numEquip, -1);
+		//solution = std::vector<int>(numEquip, -1);
+		solution = eoVector<eoMinimizingFitness, int>(numEquip, -1);
 	
 		// reset the values for capacity violations
 		numViolatedLocations = 0;
