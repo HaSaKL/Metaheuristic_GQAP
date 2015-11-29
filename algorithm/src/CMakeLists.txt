@@ -2,6 +2,7 @@ include_directories(${PARADISEO_INCLUDE_DIR})
 include_directories(${CMAKE_SOURCE_DIR}/src)
 
 set (GQAP_SOURCES
+			GQAP_Solution.h
 			GQAP.cpp
 			
 			GQAP_Eval.h

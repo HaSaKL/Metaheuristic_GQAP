@@ -6,8 +6,9 @@
 #include <vector>
 #include <algorithm>
 #include <cstdlib>
+#include "GQAP_Solution.h"
 
-class GQAP : public EO<eoMinimizingFitness>
+class GQAP : public GQAP_Solution
 {
 public:
 	// actual representation of the problems solution using
