@@ -25,7 +25,10 @@ int main(int argc, char* argv[]) {
 		rng.rand();
 		
 		//std::string fileName = "../../../test_instances/own_instances/mini_test_instances/4-2.txt";
-		std::string fileName = "../../../test_instances/from_literature/original_format/cordeau/50-10-95.txt";
+		//std::string fileName = "../../../test_instances/from_literature/original_format/cordeau/50-10-95.txt";
+		//std::string fileName = "../../../test_instances/from_literature/original_format/cordeau/20-15-35.txt";
+		std::string fileName = "../../../test_instances/from_literature/original_format/cordeau/40-10-65.txt";
+		
 		int tmp = fileName.find_last_of("/") + 1;
 		std::cout << "Using Problem " <<  fileName.substr(tmp)<< std::endl << std::endl;
 		
@@ -79,7 +82,7 @@ int main(int argc, char* argv[]) {
 			// Check if new best sol has been found
 			if (currSol < bestSol) {
 				bestSol = currSol;
-				std::cout << "New Best Solution found in Iteration " << i << ": " << bestSol << std::endl;
+				std::cout << "New Best Solution found in Iteration " << i << " ("  <<  double(clock()-t) * 1000 / (CLOCKS_PER_SEC) <<  " msec.) : " << bestSol << std::endl;
 			}
 		}
 		
@@ -115,7 +118,7 @@ int main(int argc, char* argv[]) {
 			// Check if new best sol has been found
 			if (currSol < bestSol) {
 				bestSol = currSol;
-				std::cout << "New Best Solution found in Iteration " << i << ": " << bestSol << std::endl;
+				std::cout << "New Best Solution found in Iteration " << i << " ("  <<  double(clock()-t) * 1000 / (CLOCKS_PER_SEC) <<  " msec.) : " << bestSol << std::endl;
 			}
 		}
 		
@@ -151,7 +154,7 @@ int main(int argc, char* argv[]) {
 			// Check if new best sol has been found
 			if (currSol < bestSol) {
 				bestSol = currSol;
-				std::cout << "New Best Solution found in Iteration " << i << ": " << bestSol << std::endl;
+				std::cout << "New Best Solution found in Iteration " << i << " ("  <<  double(clock()-t) * 1000 / (CLOCKS_PER_SEC) <<  " msec.) : " << bestSol << std::endl;
 			}
 		}
 		
