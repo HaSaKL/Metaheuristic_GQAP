@@ -3,7 +3,7 @@
 /* C O N S T R U C T O R S    +     D E S T R U C T O R S*/
 // Default Constructor
 GQAP::GQAP() {
-	eoVector<eoMinimizingFitness, int>(0,0);
+	solution = eoVector<eoMinimizingFitness, int>(0,0);
 	
 	transportCost = 1;
 	
@@ -219,25 +219,6 @@ int GQAP::GetNumViolatedLocations() const {
 
 double GQAP::GetNumViolatedCapacityUnits() const {
 	return numViolatedCapacityUnits;
-}
-
-
-
-// C O N V I N I E N C E   F U N C T I O N S
-void GQAP::printFitness() {
-	if (!invalid()) {
-		std::cout << "Fitness: " << fitness() << std::endl;
-	} else {
-		std::cout << "Fitness is invalid. Did you Evaluate the Fitness?" << std::endl;
-	}
-}
-
-void GQAP::printSolution() {
-	std::cout << "Solution: ";
-	for (int i = 0; i < numEquip -1; i++) {
-		std::cout << solution[i] << " ; ";
-	}
-	std::cout << solution[numEquip-1] << std::endl;
 }
 
 

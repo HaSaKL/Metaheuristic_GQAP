@@ -14,7 +14,7 @@ public:
 	// actual representation of the problems solution using
 	// an integer vector representing for each equipment
 	// its assignment to a location
-	eoVector<eoMinimizingFitness, int> solution;
+	// eoVector<eoMinimizingFitness, int> solution;
 
 	// FIXME: Idea: Add Problem Filename so a better solution could be saved to the problem file!
 
@@ -65,10 +65,6 @@ public:
 	int GetNumViolatedLocations () const;
 	double GetNumViolatedCapacityUnits() const;
 
-
-	// Convinience Functions
-	void printSolution();
-	void printFitness();
 
 	// Problem-specific Fuctios
 	void fullEvaluation();

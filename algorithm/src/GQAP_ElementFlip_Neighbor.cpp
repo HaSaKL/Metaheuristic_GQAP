@@ -12,7 +12,7 @@ void GQAP_ElementFlipIndex_Neighbor::move(GQAP& _solution) {
 	//*/
 	
 	// execute this move
-	_solution[EquipmentToLocation.first] = EquipmentToLocation.second;
+	_solution.solution[EquipmentToLocation.first] = EquipmentToLocation.second;
 	_solution.CalculateCapacityViolations();
 	_solution.fitness(this->fitness());
 	
