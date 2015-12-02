@@ -14,6 +14,8 @@ set (GQAP_SOURCES
 			GRASP_FixedAlpha.cpp
 			GRASP_UniformRandomAlpha.cpp
 			GRASP_ReactiveAlpha.cpp
+			
+			SolutionPool.cpp
 		)
 				
 set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
