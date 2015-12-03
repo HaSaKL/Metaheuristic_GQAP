@@ -16,6 +16,8 @@ set (GQAP_SOURCES
 			GRASP_ReactiveAlpha.cpp
 			
 			SolutionPool.cpp
+			
+			PathRelinking.cpp
 		)
 				
 set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
