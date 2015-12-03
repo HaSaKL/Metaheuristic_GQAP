@@ -19,6 +19,13 @@ int SolutionPool::CalculateHammingDistance(GQAP_Solution sol1, GQAP_Solution sol
 		}
 	}
 	
+	//DEBUG
+	std::cout << "Diversity of " << std::endl;
+	sol1.printSolution();
+	sol2.printSolution();
+	std::cout << "--> " << distance << std::endl << std::endl;
+	// */ 
+	
 	return distance;
 }
 
@@ -40,19 +47,22 @@ bool SolutionPool::Add(GQAP_Solution sol) {
 	}
 	
 	// If Pool is full, solution will only be added if it is at least better than the worst solution
-	if (!(sol.fitness() < Pool.back().fitness() )) {
+	if (sol < Pool.front() ) {
+		
+		// DEBUG
+		//std::cout << "Solution not good enogh" << std::endl;
+		
 		return false;
 	}
 	
-	
 	// get set of worse solutions
-	int idx = Pool.size();
+	int idx = 0;
 	while (HasBetterFitness(Pool[idx], sol)) {
-		idx--;
+		idx++;
 	}
 	
 	// get index of most diverse solution within this pool
-	std::vector<GQAP_Solution> WorseSolutions(Pool.end() , Pool.end() - idx);
+	std::vector<GQAP_Solution> WorseSolutions(Pool.begin() , Pool.begin() + idx);
 	int SwapIdx = ReturnDiverseIdx(sol, WorseSolutions);
 	
 	// replace element
@@ -139,35 +149,38 @@ int SolutionPool::ReturnRandomIdx(std::vector<GQAP_Solution> SubPool) {
 
 
 int SolutionPool::ReturnDiverseIdx(GQAP_Solution sol, std::vector<GQAP_Solution> SubPool) {
-	// Returns the Solution from a Pool which is most diverse from sol,
+	// Returns the Solution from a Pool which is least diverse from sol,
 	// If more then one solution has the same Diversity, one of those
 	// is choosen randomly
 	
 	std::vector<int> diversity(SubPool.size());
 	
+	// DBEUG
+	//std::cout << "Subpool made with size " << SubPool.size() << std::endl;
+	
 	// calculate the diverisy of each solution in the pool based on input solution
-	for (int i = 0; i <= SubPool.size(); i++) {
+	for (int i = 0; i < SubPool.size(); i++) {
 		diversity[i] = CalculateHammingDistance(sol, SubPool[i]);
 	}
 	
 	// get the maximum diversity
-	int maxDiversity = *std::max_element(diversity.begin(), diversity.end());
+	int minDiversity = *std::min_element(diversity.begin(), diversity.end());
 	
 	// collect indices of all solutions in the pool with the maximum diversiry
-	std::vector<int> MaxIndex(0);
+	std::vector<int> minIndex(0);
 	for (int i = 0; i <= SubPool.size(); i++) {
-		if (diversity[i] == maxDiversity) {
-			MaxIndex.push_back(i);
+		if (diversity[i] == minDiversity) {
+			minIndex.push_back(i);
 		}
 	}
 	
 	// return a random solution from the set of solutions with the highest diversity
-	return MaxIndex[ rng.random( MaxIndex.size() ) ];
+	return minIndex[ rng.random( minIndex.size() ) ];
 }
 
 
 int SolutionPool::ReturnDiverseIdx(GQAP_Solution sol) {
-	// Returns the Solution from the Solution Pool which is most diverse from sol
+	// Returns the Solution from the Solution Pool which is least diverse from sol
 	
 	return ReturnDiverseIdx(sol, Pool);
 }
@@ -186,7 +199,7 @@ void SolutionPool::PrintPool() {
 	
 	std::cout << "Pool contains " << Pool.size() << " of maximum " << maxPoolSize << " Solutions " << std::endl;
 	for (int i = 0; i < Pool.size(); i++) {
-		std::cout << i << ": " << Pool[i].fitness();
+		std::cout << i << ": " << Pool[i].fitness() << " ";
 		Pool[i].printSolution();
 	}
 }
