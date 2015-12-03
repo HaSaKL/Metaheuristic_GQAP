@@ -13,7 +13,7 @@
 int main(int argc, char* argv[]) {
 	try {
 		std::cout << "Metaheuristic for the GQAP compiled at " << __DATE__ << " " << __TIME__ << std::endl;
-		std::cout << "ElementFlip-Neighborhood Test" << std::endl << std::endl;
+		std::cout << "Solution Test" << std::endl << std::endl;
 		
 		// needed, so rng works in other classes ....
 		rng.rand();
@@ -58,6 +58,42 @@ int main(int argc, char* argv[]) {
 		}
 		
 		
+		// try adding last solution again to see if adding same solution does not work
+		std::cout << "Trying to add ";
+		p.printSolution();
+		std::cout << " with Fitness " << p.fitness();
+		
+		returnValue = Pool.Add(p);
+			
+		if (returnValue) {
+			std::cout << "... added to Pool." << std::endl << std::endl;
+		} else {
+			std::cout << "... not added to Pool." << std::endl << std::endl;
+		}
+			
+		Pool.PrintPool();
+		std::cout << std::endl << std::endl;
+		
+		
+		// try adding different solution but with the same fitness value to see what happens
+		int fit = p.fitness();
+		p.RandomInit();
+		p.fitness(fit);
+		
+		std::cout << "Trying to add ";
+		p.printSolution();
+		std::cout << " with Fitness " << p.fitness();
+		
+		returnValue = Pool.Add(p);
+			
+		if (returnValue) {
+			std::cout << "... added to Pool." << std::endl << std::endl;
+		} else {
+			std::cout << "... not added to Pool." << std::endl << std::endl;
+		}
+			
+		Pool.PrintPool();
+		std::cout << std::endl << std::endl;
 	}
 	catch(std::exception& e) {
 		std::cout << "Expectation cought: ";

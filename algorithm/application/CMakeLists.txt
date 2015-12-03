@@ -20,3 +20,7 @@ target_link_libraries(TEST_ELMFLIP_HC lGQAP)
 add_executable(TEST_POOL test_Pool.cpp)
 target_link_libraries(TEST_POOL ${PARADISEO_LIBRARIES})
 target_link_libraries(TEST_POOL lGQAP)
+
+add_executable(TEST_PR test_PathRelinking.cpp)
+target_link_libraries(TEST_PR ${PARADISEO_LIBRARIES})
+target_link_libraries(TEST_PR lGQAP)
