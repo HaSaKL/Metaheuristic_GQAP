@@ -35,7 +35,13 @@ public:
 	
 	bool Add(GQAP_Solution _sol);
 	void Clear();
+	
 	bool IsFull();
+	bool IsEmpty();
+	int GetSize();
+	
+	GQAP_Solution ReturnDiverseSolution(GQAP_Solution sol);
+	GQAP_Solution ReturnRandomSolution();
 	
 	void PrintPool();
 };

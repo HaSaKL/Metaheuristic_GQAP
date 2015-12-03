@@ -204,9 +204,36 @@ void SolutionPool::PrintPool() {
 	}
 }
 
+
 bool SolutionPool::IsFull() {
 	// returns true if there are maxPoolSize solutions in the pool
 	
 	return (Pool.size() >= maxPoolSize);
 	
+}
+
+
+bool SolutionPool::IsEmpty() {
+	// return true if the pool is empty
+	
+	return (Pool.size() <= 0);
+}
+
+int SolutionPool::GetSize() {
+	// returns the number of elements in the solution pool
+	
+	return Pool.size();
+}
+
+GQAP_Solution SolutionPool::ReturnDiverseSolution(GQAP_Solution sol) {
+	// returns solution most diverse from sol, if there are several with the same
+	// diversity on of those is returned randomly
+	
+	return Pool[ReturnDiverseIdx(sol)];
+}
+
+GQAP_Solution SolutionPool::ReturnRandomSolution() {
+	// randomly returns a solution from the pool
+	
+	return Pool[ReturnRandomIdx()];
 }
