@@ -19,7 +19,7 @@ int SolutionPool::CalculateHammingDistance(GQAP_Solution sol1, GQAP_Solution sol
 		}
 	}
 	
-	//DEBUG
+	/*//DEBUG
 	std::cout << "Diversity of " << std::endl;
 	sol1.printSolution();
 	sol2.printSolution();
@@ -57,7 +57,7 @@ bool SolutionPool::Add(GQAP_Solution sol) {
 	
 	// get set of worse solutions
 	int idx = 0;
-	while (HasBetterFitness(Pool[idx], sol)) {
+	while (HasBetterFitness(sol,Pool[idx])) {
 		idx++;
 	}
 	
@@ -130,7 +130,7 @@ bool SolutionPool::IsEqual(const GQAP_Solution sol1, const GQAP_Solution sol2) {
 bool SolutionPool::HasBetterFitness(const GQAP_Solution sol, const GQAP_Solution sol_ref) {
 	// returns true if the fitness of sol is better then sol_ref
 	
-	return sol.fitness() < sol_ref.fitness();
+	return !(sol < sol_ref);
 }
 
 
