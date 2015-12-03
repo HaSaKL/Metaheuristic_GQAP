@@ -34,7 +34,8 @@ public:
 	~SolutionPool();
 	
 	bool Add(GQAP_Solution _sol);
-	GQAP_Solution Clear();
+	void Clear();
+	bool IsFull();
 	
 	void PrintPool();
 };

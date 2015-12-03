@@ -41,7 +41,7 @@ bool SolutionPool::Add(GQAP_Solution sol) {
 	// solution, if there is any. Otherwise it will not enter the pool
 	
 	// If Pool is not full, solutions will always be added
-	if ( (Pool.size() < maxPoolSize) && (!IsInPool(sol)) ) {
+	if ( !IsFull() && !IsInPool(sol) ) {
 			Insert(sol);
 			return true;
 	}
@@ -186,7 +186,7 @@ int SolutionPool::ReturnDiverseIdx(GQAP_Solution sol) {
 }
 
 
-GQAP_Solution SolutionPool::Clear(){
+void SolutionPool::Clear(){
 	
 	// empties the Solution Pool
 	
@@ -202,4 +202,11 @@ void SolutionPool::PrintPool() {
 		std::cout << i << ": " << Pool[i].fitness() << " ";
 		Pool[i].printSolution();
 	}
+}
+
+bool SolutionPool::IsFull() {
+	// returns true if there are maxPoolSize solutions in the pool
+	
+	return (Pool.size() >= maxPoolSize);
+	
 }
