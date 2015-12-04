@@ -5,19 +5,11 @@
 PathRelinking::PathRelinking(std::string _direction, std::string _selectMethod) {
 	// Initialize Path Relinking Opbject by setting the pointer to desired direction and move selector - function
 	
-	CheckDirection(_direction);
 	SetDirection(_direction);
-	direction = _direction;
-	
-	CheckSelectMethod(_selectMethod);
 	SetSelectMethod(_selectMethod);
-	selectMethod = _selectMethod;
 }
 
 PathRelinking::~PathRelinking() {
-	// destroy the stepFunction and moveSelector Objects
-	delete stepFunction;
-	delete selectMoveFunction;
 }
 
 
@@ -60,6 +52,9 @@ void PathRelinking::GetDirection() {
 
 
 void PathRelinking::SetDirection(std::string _direction) {
+	// set a new direction
+	CheckDirection(_direction);
+	direction = _direction;
 }
 
 
