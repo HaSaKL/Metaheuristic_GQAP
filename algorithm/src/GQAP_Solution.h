@@ -28,6 +28,23 @@ public:
 		}
 		std::cout << solution.back() << std::endl;
 	}
+	
+	bool operator== (const GQAP_Solution sol_ref) { 
+		// returns true if sol1 and sol2 are equal
+		
+		if (solution.size() != sol_ref.solution.size()) {
+			return false;
+		} 
+		
+		for(int i = 0; i < solution.size(); i++) {
+			if (solution[i] != sol_ref.solution[i]) {
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
 };
 
 #endif // GQAP_SOLUTION_H
