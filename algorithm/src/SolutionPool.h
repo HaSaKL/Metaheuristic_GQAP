@@ -24,8 +24,9 @@ private:
 	
 	int ReturnRandomIdx();
 	int ReturnRandomIdx(std::vector<GQAP_Solution> SubPool);
-	int ReturnDiverseIdx(GQAP_Solution sol, std::vector<GQAP_Solution> SubPool);
-	int ReturnDiverseIdx(GQAP_Solution sol);
+	int ReturnLeastDiverseIdx(GQAP_Solution sol, std::vector<GQAP_Solution> SubPool);
+	int ReturnLeastDiverseIdx(GQAP_Solution sol);
+	int ReturnMostDiverseIdx(GQAP_Solution sol);
 	
 	
 	
@@ -40,8 +41,9 @@ public:
 	bool IsEmpty();
 	int GetSize();
 	
-	GQAP_Solution ReturnDiverseSolution(GQAP_Solution sol);
-	GQAP_Solution ReturnRandomSolution();
+	GQAP_Solution GetBestSolution();
+	GQAP_Solution GetMostDiverseSolution(GQAP_Solution sol);
+	GQAP_Solution GetRandomSolution();
 	
 	void PrintPool();
 };

@@ -37,13 +37,13 @@ int main(int argc, char* argv[]) {
 		
 		// Fill the Pool with random solution until it is full
 		bool returnValue;
-		for (int i = 0; i < 2 * PoolSize; i++) {
+		for (int i = 0; i < 3 * PoolSize; i++) {
 			p.RandomInit();
 			FullEval(p);
 			
-			std::cout << "Trying to add ";
+			std::cout << "Trying to add " << i << "th solution";
 			p.printSolution();
-			std::cout << " with Fitness " << p.fitness();
+			std::cout << " with Fitness " << p.fitness() << std::endl;
 			
 			returnValue = Pool.Add(p);
 			
@@ -57,6 +57,8 @@ int main(int argc, char* argv[]) {
 			std::cout << std::endl << std::endl;
 		}
 		
+		
+		std::cout << "ADDITIONAL TESTS ... " << std::endl;
 		
 		// try adding last solution again to see if adding same solution does not work
 		std::cout << "Trying to add ";
@@ -80,7 +82,7 @@ int main(int argc, char* argv[]) {
 		p.RandomInit();
 		p.fitness(fit);
 		
-		std::cout << "Trying to add ";
+		std::cout << "Trying to add different sol with same fitness";
 		p.printSolution();
 		std::cout << " with Fitness " << p.fitness();
 		
@@ -94,6 +96,37 @@ int main(int argc, char* argv[]) {
 			
 		Pool.PrintPool();
 		std::cout << std::endl << std::endl;
+		
+		
+		
+		// try getting the best element from the pool and adding it again. this caused an error once...
+		GQAP_Solution sol = Pool.GetBestSolution();
+		std::cout << "Best Solution in Pool: ";
+		sol.printSolution();
+		sol.printFitness();
+		
+		std::cout << "Adding to pool the best element again" << std::endl;
+		
+		Pool.Add(sol);
+		
+		std::cout << "Pritning pool" << std::endl;
+		
+		Pool.PrintPool();
+	
+		std::cout << "Equality Tests ..." << std::endl;
+	
+		std::cout << (sol == sol) << std::endl;
+		
+		p.RandomInit();
+		
+		std::cout << (p == sol) << std::endl;
+		std::cout << (sol == p) << std::endl;
+		
+		sol = p;
+		
+		std::cout << (p == sol) << std::endl;
+		std::cout << (sol == p) << std::endl;
+	
 	}
 	catch(std::exception& e) {
 		std::cout << "Expectation cought: ";
