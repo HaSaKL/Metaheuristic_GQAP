@@ -45,6 +45,21 @@ public:
 		return true;
 	}
 	
+	void operator= (const GQAP_Solution new_sol) {
+		for (int i = 0; i <= solution.size(); i++) {
+			solution[i] = new_sol.solution[i];
+		}
+	}
+	
+	int &operator[] (int idx) {
+		return solution[idx];
+	} 
+	
+	const int& operator[] (int idx) const {
+		return solution[idx];
+	}
+	
+	
 };
 
 #endif // GQAP_SOLUTION_H
