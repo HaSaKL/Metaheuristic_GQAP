@@ -6,49 +6,54 @@
 
 #include "SolutionPool.h"
 #include "GQAP_Solution.h"
+#include "GQAP.h"
+#include "PR_IncrEval.h"
+#include "PR_Neighbor.h"
 
-class PathRelinking
+class PathRelinking: public PR_IncrEval
 {
 private:
-	// FIXME: Move this to somewhere else?
-	const int PRDirForward =  0;
-	const int PRDirBackward = 1;
-	const int PRDirMixed = 2;
+	// FIXME: Move constants to somewhere else? e.g. in the CLI.h?
+	// this could also save the CheckDirection and CheckSelectMethod functions
+	static const int PRDirForward 	= 0;
+	static const int PRDirBackward 	= 1;
+	static const int PRDirMixed 	= 2;
 	
-	const int PRMethRandom = 0;
-	const int PRMethGreedy = 1;
-	const int PRMethGRASP  = 2;
+	static const int PRMethRandom = 0;
+	static const int PRMethGreedy = 1;
+	static const int PRMethGRASP  = 2;
+	  
+	int PR_direction;
+	int PR_selectMethod;
 	
-	std::string direction;
-	std::string selectMethod;
+	bool mixedDirectionForward;
 	
-	bool CheckDirection(std::string _direction);
-	bool CheckSelectMethod(std::string _selectMethod);
+	bool CheckDirection(const int _direction);
+	bool CheckSelectMethod(const int _selectMethod);
 	
 	GQAP_Solution step(GQAP_Solution sol_target, GQAP_Solution sol_start);
 	GQAP_Solution forwardStep(GQAP_Solution sol_target, GQAP_Solution sol_start);
 	GQAP_Solution backwardStep(GQAP_Solution sol_target, GQAP_Solution sol_start);
 	GQAP_Solution mixedStep(GQAP_Solution sol_target, GQAP_Solution sol_start);
 	
-	GQAP_Solution selectMove(std::vector<GQAP_Solution> Moves);
-	GQAP_Solution selectRandomMove(std::vector<GQAP_Solution> Moves);
-	GQAP_Solution selectGreedyMove(std::vector<GQAP_Solution> Moves);
-	GQAP_Solution selectGRASPMove(std::vector<GQAP_Solution> Moves);
+	GQAP_Solution selectMove(std::vector<int> Moves, GQAP_Solution sol_target, GQAP_Solution sol_start);
+	GQAP_Solution selectRandomMove(std::vector<int> Moves, GQAP_Solution sol_target, GQAP_Solution sol_start);
+	GQAP_Solution selectGreedyMove(std::vector<int> Moves, GQAP_Solution sol_target, GQAP_Solution sol_start);
+	GQAP_Solution selectGRASPMove(std::vector<int> Moves, GQAP_Solution sol_target, GQAP_Solution sol_start);
 	
-	std::vector<GQAP_Solution> ConstructMoves(GQAP_Solution sol_target, GQAP_Solution sol_start);
+	std::vector<int> ConstructMoves(GQAP_Solution sol_target, GQAP_Solution sol_start);
 	
 public:
-	PathRelinking(std::string direction, std::string _selectMethode);
-	PathRelinking();
+	PathRelinking(GQAP ptr_problem, const int _direction, const int _selectMethod);
 	~PathRelinking();
 	
-	GQAP_Solution operator() (GQAP_Solution sol, SolutionPool Pool);
+	GQAP_Solution operator() (GQAP_Solution sol_target, GQAP_Solution sol_start);
 	
-	void GetDirection();
-	void SetDirection(std::string _direction);
+	int GetDirection();
+	void SetDirection(const int _direction);
 	
-	void GetSelectMethod();
-	void SetSelectMethod(std::string _selectMethode);
+	int GetSelectMethod();
+	void SetSelectMethod(const int _selectMethode);
 };
 
 #endif // PATHRELINKING_H
