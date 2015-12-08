@@ -18,7 +18,7 @@ set (GQAP_SOURCES
 			
 			SolutionPool.cpp
 			PathRelinking.cpp
-			PR_Neighborhood.cpp
+			PR_Neighbor.cpp
 			PR_IncrEval.cpp
 		)
 				

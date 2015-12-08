@@ -1,9 +1,10 @@
 #ifndef PR_NEIGHBORHOOD_H
 #define PR_NEIGHBORHOOD_H
 
-#include "GQAP_ElementFlip_Neighbor.h"
+#include "neighborhood/moIndexNeighbor.h"
+#include "GQAP.h"
 
-class PR_Neighborhood: public moIndexNeighbor<GQAP, GQAP::Fitness> {
+class PR_Neighbor: public moIndexNeighbor<GQAP, GQAP::Fitness> {
 	
 private:
 	int equipment;
