@@ -10,12 +10,12 @@ private:
 	int equipment;
 	int newLocation;
 
-	void translate(unsigned int _key, GQAP_Solution sol_target, GQAP_Solution sol_start);
+	void translate(unsigned int _key, GQAP& _solution, GQAP_Solution sol_target);
 
 public:
 	using moIndexNeighbor<GQAP, typename GQAP::Fitness>::key;
-	void move(GQAP_Solution sol_target, GQAP & _solution);
-	void getMove(int & _equipment, int & _newLocation, GQAP_Solution sol_target, GQAP & _solution);
+	void move(GQAP& _solution, GQAP_Solution sol_target);
+	void getMove(int& _equipment, int& _newLocation, GQAP& _solution, GQAP_Solution sol_target);
 };
 
 #endif // PR_NEIGHBORHOOD_H
