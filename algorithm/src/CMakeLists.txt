@@ -6,6 +6,7 @@ set (GQAP_SOURCES
 			GQAP.cpp
 			
 			GQAP_Eval.h
+			GQAP_IncrEval_Base_ElementFlip.h
 			
 			GQAP_ElementFlip_Neighbor.cpp
 			GQAP_ElementFlip_IncrEval.cpp
@@ -18,6 +19,7 @@ set (GQAP_SOURCES
 			SolutionPool.cpp
 			PathRelinking.cpp
 			PR_Neighborhood.cpp
+			PR_IncrEval.cpp
 		)
 				
 set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)

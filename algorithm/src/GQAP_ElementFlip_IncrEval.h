@@ -3,9 +3,10 @@
 
 #include "GQAP.h"
 #include "GQAP_ElementFlip_Neighbor.h"
+#include "GQAP_IncrEval_Base_ElementFlip.h"
 #include <eval/moEval.h>
 
-class GQAP_ElementFlip_IncrEval: public moEval<GQAP_ElementFlipIndex_Neighbor> {
+class GQAP_ElementFlip_IncrEval: public moEval<GQAP_ElementFlipIndex_Neighbor>, public GQAP_IncrEval_Base_ElementFlip {
 public:
 
 	// Constructor
@@ -16,7 +17,9 @@ public:
 
 private:
 	GQAP* _problem;	// pointer to Problem to access its parameters and current solution
-	double CalculateIncrCosts (int equipment, int newLocation, int oldLocation);
+	
+	// moved to base class: GQAP_IncrEval_Base_ElementFlip.h
+	// double CalculateIncrCosts (int equipment, int newLocation, int oldLocation);
 	
 };
 
