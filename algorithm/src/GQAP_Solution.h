@@ -46,9 +46,13 @@ public:
 	}
 	
 	void operator= (const GQAP_Solution new_sol) {
+		solution.resize(new_sol.solution.size());
+		
 		for (int i = 0; i <= solution.size(); i++) {
 			solution[i] = new_sol.solution[i];
 		}
+		
+		solution.fitness(new_sol.fitness());
 	}
 	
 	int &operator[] (int idx) {
