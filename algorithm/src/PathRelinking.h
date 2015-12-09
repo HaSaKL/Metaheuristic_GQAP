@@ -10,6 +10,8 @@
 #include "PR_IncrEval.h"
 #include "PR_Neighbor.h"
 
+#include <neighborhood/moOrderNeighborhood.h>
+
 class PathRelinking: public PR_IncrEval
 {
 private:
@@ -26,28 +28,35 @@ private:
 	int PR_direction;
 	int PR_selectMethod;
 	
-	bool mixedDirectionForward;
+	bool mixedDirectionToggle;
+	
+	moOrderNeighborhood<PR_Neighbor> nh;
+	PR_Neighbor n;
+	
+	GQAP_Solution sol_target;
+	GQAP_Solution sol_best;
+	
+	std::vector<int> ConstructMoves();
 	
 	bool CheckDirection(const int _direction);
 	bool CheckSelectMethod(const int _selectMethod);
 	
-	GQAP_Solution step(GQAP_Solution sol_target, GQAP_Solution sol_start);
-	GQAP_Solution forwardStep(GQAP_Solution sol_target, GQAP_Solution sol_start);
-	GQAP_Solution backwardStep(GQAP_Solution sol_target, GQAP_Solution sol_start);
-	GQAP_Solution mixedStep(GQAP_Solution sol_target, GQAP_Solution sol_start);
+	// FIXME Function Signature
+	void Run();
+	void RunForward();
+	//void backwardStep(GQAP_Solution sol_target, GQAP_Solution sol_start);
+	//void mixedStep(GQAP_Solution sol_target, GQAP_Solution sol_start);
 	
-	GQAP_Solution selectMove(std::vector<int> Moves, GQAP_Solution sol_target, GQAP_Solution sol_start);
-	GQAP_Solution selectRandomMove(std::vector<int> Moves, GQAP_Solution sol_target, GQAP_Solution sol_start);
-	GQAP_Solution selectGreedyMove(std::vector<int> Moves, GQAP_Solution sol_target, GQAP_Solution sol_start);
-	GQAP_Solution selectGRASPMove(std::vector<int> Moves, GQAP_Solution sol_target, GQAP_Solution sol_start);
+	void DoMove(std::vector<int> Moves);
+	void DoRandomMove(std::vector<int> Moves);
+	//void DoGreedyMove(std::vector<int> Moves);
+	//void DoGRASPMove(std::vector<int> Moves);
 	
-	std::vector<int> ConstructMoves(GQAP_Solution sol_target, GQAP_Solution sol_start);
 	
 public:
-	PathRelinking(GQAP ptr_problem, const int _direction, const int _selectMethod);
-	~PathRelinking();
-	
-	GQAP_Solution operator() (GQAP_Solution sol_target, GQAP_Solution sol_start);
+	PathRelinking(int _direction, int _selectMethod);
+	void PR_Init(int _direction, int _selectMethod);
+	void operator() (GQAP *_ptr_problem, GQAP_Solution _sol_target);
 	
 	int GetDirection();
 	void SetDirection(const int _direction);
