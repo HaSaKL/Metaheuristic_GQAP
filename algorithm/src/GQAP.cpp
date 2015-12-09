@@ -144,6 +144,36 @@ void GQAP::operator =(GQAP & _problem) {
 	CopyProblem(_problem);
 }
 
+void GQAP::operator=(GQAP_Solution& _solution) {
+	if (_solution.solution.size() != solution.size()) {
+		throw std::runtime_error("ERROR: Trying to GQAP_Solution with differen size to a GQAP");
+	}
+	
+	for (int i = 0; i < solution.size(); i++) {
+		solution[i] = _solution[i];
+	}
+	
+	fitness(_solution.fitness());
+	CalculateCapacityViolations();
+}
+
+// Conversion Operator
+GQAP::operator GQAP_Solution() {
+	GQAP_Solution tmp;
+	
+	tmp.solution.resize(solution.size());
+	
+	for (int i = 0; i <= solution.size(); i++) {
+		tmp.solution[i] = solution[i];
+	}
+		
+	tmp.fitness(fitness());
+	
+	return tmp;
+}
+
+
+
 
 /* G E T T E R  -  F U N C T I O N S*/
 

@@ -30,8 +30,10 @@ public:
 
 
 	// Operators
-	void operator=(GQAP& _problem);	// Copy Assignment
-	int& operator[](int equipment); // Subsetting Operator
+	void operator=(GQAP& _problem);	 // Copy Assignment
+	void operator=(GQAP_Solution& _solution); // Copy an GQAP_Solution Type 
+	int& operator[](int equipment);  // Subsetting Operator
+	operator GQAP_Solution();		 // type conversion to GQAP_Solution Type
 
 
 
