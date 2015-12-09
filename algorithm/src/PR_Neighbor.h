@@ -14,7 +14,9 @@ private:
 
 public:
 	using moIndexNeighbor<GQAP, typename GQAP::Fitness>::key;
+	
 	void move(GQAP& _solution, GQAP_Solution sol_target);
+	void move(GQAP& _solution);
 	void getMove(int& _equipment, int& _newLocation, GQAP& _solution, GQAP_Solution sol_target);
 };
 

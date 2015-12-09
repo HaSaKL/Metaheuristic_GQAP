@@ -19,6 +19,10 @@ void PR_Neighbor::move(GQAP& _solution, GQAP_Solution sol_target) {
 	_solution.fitness(this->fitness());
 }
 
+void PR_Neighbor::move(GQAP& _solution) {
+	throw std::runtime_error("ERROR: Must not call PR_Neighbor::move without a target solution");
+}
+
 void PR_Neighbor::getMove(int& _equipment, int& _newLocation, GQAP& _solution, GQAP_Solution sol_target) {
 	// Get move ist called by the incremental evaluation function and return
 	// the move that will be made in the move function
