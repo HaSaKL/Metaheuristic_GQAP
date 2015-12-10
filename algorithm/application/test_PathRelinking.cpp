@@ -21,7 +21,8 @@ int main(int argc, char* argv[]) {
 		
 		std::cout << "Loading Problem \"";
 		
-		std::string fileName = "../../../test_instances/own_instances/mini_test_instances/4-2.txt";
+		//std::string fileName = "../../../test_instances/own_instances/mini_test_instances/4-2.txt";
+		std::string fileName = "../../../test_instances/from_literature/original_format/cordeau/20-15-35.txt";
 		std::cout << fileName << "\"" << std::endl;
 		
 		// Initialize Problem
@@ -32,12 +33,12 @@ int main(int argc, char* argv[]) {
 		GQAP_Eval FullEval;
 		
 		// Define an empty solution Pool
-		int poolSize = 5;
+		int poolSize = 10;
 		SolutionPool Pool(poolSize);
 		
 		// fill pool with random solution
 		for (int i = 0; i < poolSize; i++) {
-			p.GRASPInit(0);
+			p.GRASPInit(0.4);
 			FullEval(p);
 			Pool.Add(p);
 		}
@@ -55,7 +56,8 @@ int main(int argc, char* argv[]) {
 		p.printFitness();
 		std::cout << std::endl;
 		
-		std::cout << "Starting of Path-Relinking with first solution in pool ..." << std::endl;
+		std::cout << "Starting of Path-Relinking with most diverse solution ..." << std::endl;
+		
 		PR(& p,Pool.GetMostDiverseSolution(p));
 		
 		std::cout << std::endl;

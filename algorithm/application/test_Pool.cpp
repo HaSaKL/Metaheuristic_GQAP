@@ -20,7 +20,8 @@ int main(int argc, char* argv[]) {
 		
 		std::cout << "Loading Problem \"";
 		
-		std::string fileName = "../../../test_instances/own_instances/mini_test_instances/4-2.txt";
+		//std::string fileName = "../../../test_instances/own_instances/mini_test_instances/4-2.txt";
+		std::string fileName = "../../../test_instances/from_literature/original_format/cordeau/20-15-35.txt";
 		std::cout << fileName << "\"" << std::endl;
 		
 		// Initialize Problem
