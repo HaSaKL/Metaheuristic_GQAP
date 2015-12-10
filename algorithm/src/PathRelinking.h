@@ -47,14 +47,15 @@ private:
 	//void backwardStep(GQAP_Solution sol_target, GQAP_Solution sol_start);
 	//void mixedStep(GQAP_Solution sol_target, GQAP_Solution sol_start);
 	
-	void DoMove(std::vector<int> Moves);
-	void DoRandomMove(std::vector<int> Moves);
-	//void DoGreedyMove(std::vector<int> Moves);
-	//void DoGRASPMove(std::vector<int> Moves);
+	void DoMove(std::vector<int> & Moves);
+	void DoRandomMove(std::vector<int> & Moves);
+	//void DoGreedyMove(std::vector<int> & Moves);
+	//void DoGRASPMove(std::vector<int> & Moves);
 	
 	
 public:
 	PathRelinking(int _direction, int _selectMethod);
+	PathRelinking();
 	void PR_Init(int _direction, int _selectMethod);
 	void operator() (GQAP *_ptr_problem, GQAP_Solution _sol_target);
 	
