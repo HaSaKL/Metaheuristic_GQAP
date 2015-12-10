@@ -41,17 +41,18 @@ void PathRelinking::operator () (GQAP *_ptr_problem, GQAP_Solution _sol_target) 
 	nh.setNeighborhoodSize(_problem->GetNumEquip()),
 	nh.init(*_ptr_problem, n);
 	
-	
-	// FIXME: Use Best Solutin either starting or target, depending on fitness. Not just one of those randomly
 	sol_target = _sol_target;
-	sol_best   = _sol_target;
+	
+	if (sol_target > *_problem) {
+		sol_best = _sol_target;
+	} else {
+		sol_best = *_problem;
+	}
 	
 	/*// DEBUG
-	std::cout << "Starting Path-Relinking ... " << std::endl;
-	sol_best.printSolution();
-	std::cout << "Sol Best Invalid? : " << sol_best.invalid() << std::endl; 
-	std::cout << "Best known Fitness: " << sol_best.fitness() << std::endl; 
-	sol_best.printFitness();
+	std::cout << "Sol Target Fitness: " << sol_target.fitness() << std::endl;
+	std::cout << "Sol Current Fitness: " << _problem->fitness() << std::endl;
+	std::cout << "Sol Best Fitness: " << sol_best.fitness() << std::endl;
 	// */
 	
 	// execute the actual Path-Relinking
@@ -79,8 +80,8 @@ void PathRelinking::RunForward() {
 	while (Moves.size() > 0) {
 		
 		 //DEBUG
-		std::cout << std::endl << std::endl;;
-		std::cout << "Possible Moves: " << Moves.size() << std::endl;  
+		//std::cout << std::endl << std::endl;;
+		//std::cout << "Possible Moves: " << Moves.size() << std::endl;  
 		// */
 		
 		DoMove(Moves);
@@ -142,7 +143,7 @@ std::vector<int> PathRelinking::ConstructMoves() {
 		}
 	}
 	
-	 //DEBUG - List Moves
+	/* //DEBUG - List Moves
 	std::cout << std::endl;
 	std::cout << "----------------- Constructing Moves -----------" << std::endl; 
 	std::cout << "Target Solution: "; sol_target.printSolution();
@@ -219,8 +220,7 @@ void PathRelinking::DoRandomMove(std::vector<int> & Moves) {
 	int idx_equip = Moves[idx_move];
 	Moves.erase(Moves.begin() + idx_move);
 	
-	// DEBUG
-	std::cout << "Chosen Index Move: " << idx_move << " --> Equip " << idx_equip << std::endl;
+	//std::cout << "DEBUG Chosen Index Move: " << idx_move << " --> Equip " << idx_equip << std::endl;
 	
 	//set neighbor to choosen move, default after initialization is to move equipment 0
 	nh.init(*_problem, n);
@@ -232,7 +232,7 @@ void PathRelinking::DoRandomMove(std::vector<int> & Moves) {
 	// Evaluate Move
 	DoIncrEval(*_problem, n, sol_target);
 	
-	//DEBUG
+	/*//DEBUG
 	std::cout << "Position in NH: " << nh.position() << std::endl;
 	std::cout << "Key in neighbor: " << n.getKey() << std::endl;
 	std::cout << "Realizing Random Move " << idx_move << " (equipment " << idx_equip << ")" << std::endl;
