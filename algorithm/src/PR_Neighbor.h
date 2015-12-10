@@ -18,6 +18,7 @@ public:
 	void move(GQAP& _solution, GQAP_Solution sol_target);
 	void move(GQAP& _solution);
 	void getMove(int& _equipment, int& _newLocation, GQAP& _solution, GQAP_Solution sol_target);
+	unsigned int getKey();
 };
 
 #endif // PR_NEIGHBORHOOD_H

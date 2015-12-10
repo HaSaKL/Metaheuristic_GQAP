@@ -31,3 +31,7 @@ void PR_Neighbor::getMove(int& _equipment, int& _newLocation, GQAP& _solution, G
 	_equipment = equipment;
 	_newLocation = newLocation;
 }
+
+unsigned int PR_Neighbor::getKey() {
+	return key;
+}
