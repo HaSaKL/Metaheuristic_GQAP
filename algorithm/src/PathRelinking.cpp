@@ -30,9 +30,6 @@ void PathRelinking::operator () (GQAP *_ptr_problem, GQAP_Solution _sol_target) 
 	// DEBUG
 	//std::cout << "Initializing Path-Relinking for new run ..." << std::endl;
 	
-	// Initialize the Toggler for mixed Path-Relinking
-	mixedDirectionToggle = true;
-	
 	// Initialize the Incremental Evaluation for the new start
 	IncrEval_Init(*_ptr_problem);
 	
@@ -64,9 +61,9 @@ void PathRelinking::operator () (GQAP *_ptr_problem, GQAP_Solution _sol_target) 
 
 void PathRelinking::Run() {
 	switch (PR_direction) {
-		case PRDirForward: RunForward(); break;
+		case PRDirForward: 	RunForward();  break;
 		case PRDirBackward: RunBackward(); break;
-		//case PRDirMixed:    return mixedStep(sol_target, sol_start);
+		case PRDirMixed: 	RunMixed();    break;
 	}
 }
 
@@ -126,17 +123,90 @@ void PathRelinking::RunBackward() {
 	RunForward();
 }
 
-/*
-void PathRelinking::mixedStep(GQAP_Solution sol_target, GQAP_Solution sol_start) {
-	if (mixedDirectionToggle) {
-		mixedDirectionToggle = false;
-		return forwardStep(sol_target, sol_start);
-	} else {
-		mixedDirectionToggle = true;
-		return backwardStep(sol_target, sol_start);
+void PathRelinking::RunMixed() {
+	// Alternate the direction of the path relinking
+	// do this by slightliy modifiying the forward path-relinking
+	// by toggeling the problem and target solution
+	// this makes it computational more expensive
+	// possible alternative would be a differend method-definition
+	// but NOT using neighborhoods
+	
+	GQAP p1 = *_problem;
+	GQAP p2 = *_problem;
+	p2 = sol_target;
+	
+	bool toggleDir = true;
+	
+	GQAP* problem_ptr = _problem;
+	
+	//GQAP_Solution t1 = sol_target;
+	//GQAP_Solution t2 = GQAP_Solution(p1);
+	
+	
+	// Moves are independent of PR-Direction
+	std::vector<int> Moves = ConstructMoves();
+	
+	while(Moves.size() > 0) {
+		if (toggleDir) {
+			_problem = & p1;
+			sol_target = GQAP_Solution(p2);
+			
+			/*// DEBUG
+			std::cout << "--------Before Move:---------" << std::endl;
+			std::cout << "Starting Sol: " << _problem->fitness() << " ";
+			_problem->printSolution();
+			std::cout << "Target Sol:   " << sol_target.fitness() << " ";
+			sol_target.printSolution();
+			std::cout << "-----------------------------" << std::endl << std::endl;
+			//*/
+			
+			DoMove(Moves);
+			toggleDir = false;
+			
+			/*// DEBUG
+			std::cout << "--------After Move:---------" << std::endl;
+			std::cout << "Starting Sol: " << _problem->fitness() << " ";
+			_problem->printSolution();
+			std::cout << "Target Sol:   " << sol_target.fitness() << " ";
+			sol_target.printSolution();
+			std::cout << "-----------------------------" << std::endl << std::endl;
+			//*/
+			
+		} else {
+			_problem = & p2;
+			sol_target = GQAP_Solution(p1);
+			
+			/*// DEBUG
+			std::cout << "--------Before Move:---------" << std::endl;
+			std::cout << "Starting Sol: " << _problem->fitness() << " ";
+			_problem->printSolution();
+			std::cout << "Target Sol:   " << sol_target.fitness() << " ";
+			sol_target.printSolution();
+			std::cout << "-----------------------------" << std::endl << std::endl;
+			//*/
+			
+			DoMove(Moves);
+			toggleDir = true;
+			
+			/*// DEBUG
+			std::cout << "--------After Move:---------" << std::endl;
+			std::cout << "Starting Sol: " << _problem->fitness() << " ";
+			_problem->printSolution();
+			std::cout << "Target Sol:   " << sol_target.fitness() << " ";
+			sol_target.printSolution();
+			std::cout << "-----------------------------" << std::endl << std::endl;
+			//*/
+		}
+		if(*_problem > sol_best) {	
+			sol_best = GQAP_Solution(*_problem);
+		}
 	}
+	
+	// set the solution after PR-Run to the best known solution
+	_problem = problem_ptr;
+	*_problem = sol_best;
 }
-*/
+
 
 std::vector<int> PathRelinking::ConstructMoves() {
 	// Constructs a Vector of possible moves towards the target solution
@@ -152,7 +222,7 @@ std::vector<int> PathRelinking::ConstructMoves() {
 		}
 	}
 	
-	 //DEBUG - List Moves
+	 /*//DEBUG - List Moves
 	std::cout << std::endl;
 	std::cout << "----------------- Constructing Moves -----------" << std::endl; 
 	std::cout << "Target Solution: "; sol_target.printSolution();
@@ -258,9 +328,9 @@ void PathRelinking::DoRandomMove(std::vector<int> & Moves) {
 }
 
 /*
-GQAP_Solution PathRelinking::selectGreedyMove(std::vector<int> Moves, GQAP_Solution sol_target, GQAP_Solution sol_start) {
+void PathRelinking::DoGreedyMove(std::vector<int> & Moves) {
 }
 
-GQAP_Solution PathRelinking::selectGRASPMove(std::vector<int> Moves, GQAP_Solution sol_target, GQAP_Solution sol_start) {
+void PathRelinking::DOGRASPMove(std::vector<int> & Moves) {
 }
 */

@@ -28,8 +28,6 @@ private:
 	int PR_direction;
 	int PR_selectMethod;
 	
-	bool mixedDirectionToggle;
-	
 	moOrderNeighborhood<PR_Neighbor> nh;
 	PR_Neighbor n;
 	
@@ -45,7 +43,7 @@ private:
 	void Run();
 	void RunForward();
 	void RunBackward();
-	//void mixedStep(GQAP_Solution sol_target, GQAP_Solution sol_start);
+	void RunMixed();
 	
 	void DoMove(std::vector<int> & Moves);
 	void DoRandomMove(std::vector<int> & Moves);

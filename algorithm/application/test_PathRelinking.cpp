@@ -45,7 +45,7 @@ int main(int argc, char* argv[]) {
 		Pool.PrintPool();
 		
 		// Intialize the Path-Relinking with Forward-PR and Random Move
-		PathRelinking PR(1,0);
+		PathRelinking PR(2,0);
 		
 		// make a new solution and Path-Relink it with the first solution in the pool
 		p.RandomInit();
@@ -72,8 +72,7 @@ int main(int argc, char* argv[]) {
 		p.printFitness();
 		
 		
-		std::cout << "Should solution be entered to this Pool? " << std::endl;
-		Pool.PrintPool();
+		std::cout << "Should solution be entered to Pool? " << std::endl;
 		
 		if (Pool.Add(p)) {
 			std::cout << "YES, new Pool:" << std::endl;
