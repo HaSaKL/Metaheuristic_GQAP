@@ -13,6 +13,11 @@ public:
 	// Representation of a solution
 	eoVector<eoMinimizingFitness, int> solution;
 	
+	// Ctor
+	GQAP_Solution() {
+		solution = eoVector<eoMinimizingFitness, int>(0,0);
+	}
+	
 	void printFitness() {
 		if (!invalid()) {
 			std::cout << "Fitness: " << fitness() << std::endl;
@@ -52,7 +57,7 @@ public:
 			solution[i] = new_sol.solution[i];
 		}
 		
-		solution.fitness(new_sol.fitness());
+		fitness(new_sol.fitness());
 	}
 	
 	int &operator[] (int idx) {
