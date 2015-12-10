@@ -21,8 +21,8 @@ int main(int argc, char* argv[]) {
 		
 		std::cout << "Loading Problem \"";
 		
-		//std::string fileName = "../../../test_instances/own_instances/mini_test_instances/4-2.txt";
-		std::string fileName = "../../../test_instances/from_literature/original_format/cordeau/20-15-35.txt";
+		std::string fileName = "../../../test_instances/own_instances/mini_test_instances/4-2.txt";
+		//std::string fileName = "../../../test_instances/from_literature/original_format/cordeau/20-15-35.txt";
 		std::cout << fileName << "\"" << std::endl;
 		
 		// Initialize Problem
@@ -45,7 +45,7 @@ int main(int argc, char* argv[]) {
 		Pool.PrintPool();
 		
 		// Intialize the Path-Relinking with Forward-PR and Random Move
-		PathRelinking PR(0,0);
+		PathRelinking PR(1,0);
 		
 		// make a new solution and Path-Relink it with the first solution in the pool
 		p.RandomInit();
