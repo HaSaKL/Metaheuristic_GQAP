@@ -28,7 +28,7 @@ void PathRelinking::operator () (GQAP *_ptr_problem, GQAP_Solution _sol_target) 
 	// then run the path-relinking
 	
 	// DEBUG
-	//std::cout << "Initializing Path-Relinking for new run ..." << std::endl;
+	std::cout << "Initializing Path-Relinking for new run ..." << std::endl;
 	
 	// Initialize the Toggler for mixed Path-Relinking
 	mixedDirectionToggle = true;
@@ -49,7 +49,7 @@ void PathRelinking::operator () (GQAP *_ptr_problem, GQAP_Solution _sol_target) 
 		sol_best = *_problem;
 	}
 	
-	/*// DEBUG
+	// DEBUG
 	std::cout << "Sol Target Fitness: " << sol_target.fitness() << std::endl;
 	std::cout << "Sol Current Fitness: " << _problem->fitness() << std::endl;
 	std::cout << "Sol Best Fitness: " << sol_best.fitness() << std::endl;
@@ -79,9 +79,9 @@ void PathRelinking::RunForward() {
 	
 	while (Moves.size() > 0) {
 		
-		 //DEBUG
-		//std::cout << std::endl << std::endl;;
-		//std::cout << "Possible Moves: " << Moves.size() << std::endl;  
+		/* //DEBUG
+		std::cout << std::endl << std::endl;;
+		std::cout << "Possible Moves: " << Moves.size() << std::endl;  
 		// */
 		
 		DoMove(Moves);
@@ -137,7 +137,7 @@ std::vector<int> PathRelinking::ConstructMoves() {
 	
 	std::vector<int> Moves;
 	
-	for (int i = 0; i <= sol_target.solution.size(); i++) {
+	for (int i = 0; i < sol_target.solution.size(); i++) {
 		if (sol_target.solution[i] != _problem->solution[i]) {
 			Moves.push_back(i);
 		}
@@ -229,15 +229,19 @@ void PathRelinking::DoRandomMove(std::vector<int> & Moves) {
 		nh.next(*_problem, n);
 	}
 	
+	/*// DEBUG
+	std::cout << "DEBUG: DoIncrEval..." << std::endl;
+	std::cout << "Position in NH: " << nh.position() << std::endl;
+	std::cout << "Current Fitness: " << _problem->fitness() << std::endl << std::endl;
+	//*/
+	
 	// Evaluate Move
 	DoIncrEval(*_problem, n, sol_target);
 	
 	/*//DEBUG
-	std::cout << "Position in NH: " << nh.position() << std::endl;
 	std::cout << "Key in neighbor: " << n.getKey() << std::endl;
-	std::cout << "Realizing Random Move " << idx_move << " (equipment " << idx_equip << ")" << std::endl;
 	std::cout << "New Fitness:     " << n.fitness() << std::endl;
-	std::cout << "Current Fitness: " << _problem->fitness() << std::endl;
+	std::cout << "Doing " << idx_move << " (equipment " << idx_equip << ") NOW" << std::endl;
 	//*/
 	
 	// Make move
