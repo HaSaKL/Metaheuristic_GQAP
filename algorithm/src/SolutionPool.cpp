@@ -49,6 +49,10 @@ bool SolutionPool::Add(GQAP_Solution sol) {
 	
 	
 	// If Pool is full, solution will only be added if it is at least better than the worst solution
+	
+	//std::cout << "DEBUG Fitness GQAP_Sol: " << sol.fitness() << std::endl;
+	//std::cout << "DEBUG Fitness Pool.front: " << Pool.front().fitness() << std::endl;
+	
 	//std::cout << "DEBUG: Checking to if solution is at least better than worst solution ... " << std::endl;
 	if (sol < Pool.front() ) {
 		
@@ -61,10 +65,16 @@ bool SolutionPool::Add(GQAP_Solution sol) {
 	
 	// get set of worse solutions
 	//std::cout << "DEBUG: Get set of worse solutions ... " << std::endl;
+	//std::cout << "DEBUG: Pool.size = " << Pool.size() << std::endl;
 	int idx = 0;
-	while (HasBetterFitness(sol,Pool[idx]) && idx < Pool.size()) {
-		idx++;
-		//std::cout << "DEBUG: Next: HasBetterFitness(sol,Pool["<<idx<<"]): " << sol.fitness() << " vs. " << Pool[idx].fitness() << ": " << (sol > Pool[idx]) << std::endl;
+	while (idx < Pool.size()) {
+		//std::cout << "DEBUG: Current: HasBetterFitness(sol,Pool["<<idx<<"]): " << sol.fitness() << " vs. " << Pool[idx].fitness() << ": " << (sol > Pool[idx]) << std::endl;
+		if (HasBetterFitness(sol,Pool[idx])) {
+			idx++;
+		} else {
+			break;
+		}
+		//std::cout << "DEBUG: NEXT: HasBetterFitness(sol,Pool["<<idx<<"]) " << std::endl;
 	}
 	
 	// get index of most diverse solution within this pool
