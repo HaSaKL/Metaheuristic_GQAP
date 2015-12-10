@@ -262,13 +262,17 @@ GQAP_Solution SolutionPool::GetMostDiverseSolution(GQAP_Solution sol) {
 	// returns solution most diverse from sol, if there are several with the same
 	// diversity on of those is returned randomly
 	
-	return Pool[ReturnMostDiverseIdx(sol)];
+	int idx = ReturnMostDiverseIdx(sol);
+	
+	return Pool[idx];
 }
 
 GQAP_Solution SolutionPool::GetRandomSolution() {
 	// randomly returns a solution from the pool
 	
-	return Pool[ReturnRandomIdx()];
+	int idx = ReturnRandomIdx();
+	
+	return Pool[idx];
 }
 
 GQAP_Solution SolutionPool::GetBestSolution() {
