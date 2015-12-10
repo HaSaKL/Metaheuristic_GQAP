@@ -23,3 +23,7 @@ void PR_IncrEval::DoIncrEval(PR_Neighbor::EOT & _solution, PR_Neighbor & _neighb
 	// Update fitness value
 	_neighbor.fitness(_solution.fitness() + incrTotal);
 }
+
+void PR_IncrEval::operator() (PR_Neighbor::EOT & _solution, PR_Neighbor & _neighbor) {
+	throw std::runtime_error("ERROR: Called operator() on PR_IncrEval without providing a targerting solution!");
+}

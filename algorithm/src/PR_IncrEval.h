@@ -18,6 +18,7 @@ public:
 	
 	// Interface function
 	void DoIncrEval(PR_Neighbor::EOT & _solution, PR_Neighbor & _neighbor, GQAP_Solution sol_target);
+	void operator() (PR_Neighbor::EOT & _solution, PR_Neighbor & _neighbor);
 	
 	// pointer to problem to access its parameters and current solution, could also be realized using friends!
 	GQAP* _problem;
