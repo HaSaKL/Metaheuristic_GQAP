@@ -44,7 +44,7 @@ private:
 	// FIXME Function Signature
 	void Run();
 	void RunForward();
-	//void backwardStep(GQAP_Solution sol_target, GQAP_Solution sol_start);
+	void RunBackward();
 	//void mixedStep(GQAP_Solution sol_target, GQAP_Solution sol_start);
 	
 	void DoMove(std::vector<int> & Moves);

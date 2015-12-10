@@ -28,7 +28,7 @@ void PathRelinking::operator () (GQAP *_ptr_problem, GQAP_Solution _sol_target) 
 	// then run the path-relinking
 	
 	// DEBUG
-	std::cout << "Initializing Path-Relinking for new run ..." << std::endl;
+	//std::cout << "Initializing Path-Relinking for new run ..." << std::endl;
 	
 	// Initialize the Toggler for mixed Path-Relinking
 	mixedDirectionToggle = true;
@@ -49,7 +49,7 @@ void PathRelinking::operator () (GQAP *_ptr_problem, GQAP_Solution _sol_target) 
 		sol_best = *_problem;
 	}
 	
-	// DEBUG
+	/*// DEBUG
 	std::cout << "Sol Target Fitness: " << sol_target.fitness() << std::endl;
 	std::cout << "Sol Current Fitness: " << _problem->fitness() << std::endl;
 	std::cout << "Sol Best Fitness: " << sol_best.fitness() << std::endl;
@@ -64,8 +64,8 @@ void PathRelinking::operator () (GQAP *_ptr_problem, GQAP_Solution _sol_target) 
 
 void PathRelinking::Run() {
 	switch (PR_direction) {
-		case PRDirForward: RunForward();
-		//case PRDirBackward:  return backwardStep(sol_target, sol_start);
+		case PRDirForward: RunForward(); break;
+		case PRDirBackward: RunBackward(); break;
 		//case PRDirMixed:    return mixedStep(sol_target, sol_start);
 	}
 }
@@ -113,11 +113,20 @@ void PathRelinking::RunForward() {
 	*_problem = sol_best;
 }
 
-/*void PathRelinking::backwardStep(GQAP_Solution sol_target, GQAP_Solution sol_start) {
-	return forwardStep(sol_start, sol_target);
+void PathRelinking::RunBackward() {
+	// Just like run forward but in different direction.
+	// this means run forward can be called but the starting and 
+	// target solutions need to be changed
+	
+	GQAP_Solution tmp;
+	tmp = sol_target;
+	sol_target = GQAP_Solution(*_problem);
+	*_problem = tmp;
+	
+	RunForward();
 }
 
-
+/*
 void PathRelinking::mixedStep(GQAP_Solution sol_target, GQAP_Solution sol_start) {
 	if (mixedDirectionToggle) {
 		mixedDirectionToggle = false;
@@ -143,7 +152,7 @@ std::vector<int> PathRelinking::ConstructMoves() {
 		}
 	}
 	
-	/* //DEBUG - List Moves
+	 //DEBUG - List Moves
 	std::cout << std::endl;
 	std::cout << "----------------- Constructing Moves -----------" << std::endl; 
 	std::cout << "Target Solution: "; sol_target.printSolution();
@@ -205,9 +214,9 @@ void PathRelinking::SetSelectMethod(const int _selectMethode) {
 
 void PathRelinking::DoMove(std::vector<int> & Moves) {
 	switch (PR_selectMethod) {
-		case PRMethRandom: DoRandomMove(Moves);
-		//case PRMethGreedy: return selectGreedyMove(Moves, sol_target, sol_start);
-		//case PRMethGRASP : return selectGRASPMove(Moves, sol_target, sol_start);
+		case PRMethRandom: DoRandomMove(Moves); break;
+		//case PRMethGreedy: return selectGreedyMove(Moves, sol_target, sol_start); break;
+		//case PRMethGRASP : return selectGRASPMove(Moves, sol_target, sol_start); break;
 	}
 }
 
