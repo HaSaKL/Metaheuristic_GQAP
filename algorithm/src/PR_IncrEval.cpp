@@ -18,7 +18,17 @@ void PR_IncrEval::DoIncrEval(PR_Neighbor::EOT & _solution, PR_Neighbor & _neighb
 	oldLocation = _problem -> solution[equipment];
 	
 	double incrTotal = 0;
+	
+	/*//DEBUG
+	std::cout << "DEBUG: CalcualtingIncrCosts " << std::endl;
+	std::cout << "Equipment: " << equipment << std::endl;
+	std::cout << "new Location: " << newLocation << std::endl;
+	std::cout << "old Location: " << oldLocation << std::endl;
+	//*/
+	
 	incrTotal = CalculateIncrCosts(equipment, newLocation, oldLocation, _problem);
+	
+	//std::cout << "DEBUG: Updateing Fitness " << std::endl;
 	
 	// Update fitness value
 	_neighbor.fitness(_solution.fitness() + incrTotal);
