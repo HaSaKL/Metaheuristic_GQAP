@@ -4,11 +4,18 @@
 
 PathRelinking::PathRelinking(int _direction = PRDirBackward, int _selectMethod = PRMethRandom) {
 	// Initialize Path Relinking Object by the desired direction and move selector
+	alpha_gen = NULL;
 	PR_Init(_direction, _selectMethod);
 }
 
 PathRelinking::PathRelinking() {
+	alpha_gen = NULL;
 	PR_Init(PRDirBackward, PRMethRandom);
+}
+
+PathRelinking::~PathRelinking() {
+	// also detroy the alpha-generator
+	delete alpha_gen;
 }
 
 // I N I T I A L I Z E R
@@ -17,6 +24,14 @@ void PathRelinking::PR_Init(int _direction, int _selectMethod) {
 	// set the Direction of Path-Relinking and Selector if it should be changed for a new PR-Run
 	SetDirection(_direction);
 	SetSelectMethod(_selectMethod);
+	
+	// If Selector works with Alpha-Value: Initialize Alpha-Generator
+	if (PR_selectMethod == PRMethGRASP) {
+		// CHECKME: For more advanced implementation another alpha-generator (e.g. teh default for the algorithm?)
+		// could also be initialized and used; make sure to initialize it!!!
+		alpha_gen = new GRASP_FixedAlpha(0.2);
+	}
+	
 }
 
 
@@ -285,8 +300,8 @@ void PathRelinking::SetSelectMethod(const int _selectMethode) {
 void PathRelinking::DoMove(std::vector<int> & Moves) {
 	switch (PR_selectMethod) {
 		case PRMethRandom: DoRandomMove(Moves); break;
-		case PRMethGreedy: return DoGreedyMove(Moves); break;
-		case PRMethGRASP : return DoGRASPMove(Moves); break;
+		case PRMethGreedy: DoGreedyMove(Moves); break;
+		case PRMethGRASP : DoGRASPMove(Moves); break;
 	}
 }
 
@@ -393,11 +408,121 @@ void PathRelinking::DoGreedyMove(std::vector<int> & Moves) {
 	
 	//std::cout << "Executing Move ..." << std::endl;
 	
-	// execute this move
+	// evaluate and execute this move
+	// re evaluation is needed b/c neighborhood was moved around and Fitness needs to be set
+	DoIncrEval(*_problem, n, sol_target);
 	n.move(*_problem, sol_target);
 }
 
 
 void PathRelinking::DoGRASPMove(std::vector<int> & Moves) {
+	// Evaluate all possible moves and choose a suitable move from the list according to a GRASP scheme
+	
+	
+	// Vector holding the fitness value of each possible move
+	std::vector<MovePairType> MovePair;
+	MovePair.resize(Moves.size());
+	
+	// initialize the neighbor hood for the current solution
+	nh.init(*_problem, n);
+	
+	
+	// Evaluate all moves and store fitness values in MoveFitness
+	for (int i = 0; i < Moves.size(); i++) {
+		
+		// set position of current move. Must not be realized for move zero, 
+		// which is supposed to be the first if it is valid at all! 
+		// This is ensured by ConstructMoves
+		if (Moves[i] > 0) {
+			nh.setPosition(Moves[i]-1); // set to -1 so next can jump to correct solution
+			nh.next(*_problem, n);
+		}
+		
+		// Evaluate move
+		DoIncrEval(*_problem, n, sol_target);
+		
+		// store result in vector
+		MovePair[i].first = n.fitness();
+		MovePair[i].second = i;
+	}
+	
+	
+	/*//DEBUG
+	std::cout << "RCL - Contents: " << std::endl;
+	std::cout << "idx  Fitness" << std::endl;
+	for (int i = 0; i < MovePair.size(); i++) {
+		std::cout << MovePair[i].second << "    " << MovePair[i].first << std::endl;
+	}
+	std::cout << std::endl;
+	// */
+	
+	
+	
+	// choose index using GRASP-Procedure
+	
+	// sort the moves and choose from an RCL based on the sorted moves
+	std::sort(MovePair.begin(), MovePair.end());
+	
+	/*//DEBUG
+	std::cout << "RCL - Contents after sort: " << std::endl;
+	std::cout << "idx  Fitness" << std::endl;
+	for (int i = 0; i < MovePair.size(); i++) {
+		std::cout << MovePair[i].second << "    " << MovePair[i].first << std::endl;
+	}
+	std::cout << std::endl;
+	// */
+	
+	
+	double alpha = alpha_gen->operator ()(*_problem);
+	
+	double minFitness = MovePair.front().first;
+	double maxFitness = MovePair.back().first;
+	double maxRCLFit  = minFitness + alpha * (maxFitness - minFitness);
+	
+	// find first index of sorted RCL list element with higher then cut-off costs
+	// implementaion using std::upper_bound does not work b/c of type is pair
+	int cutOff_idx = 0;
+	while (cutOff_idx < MovePair.size()) {
+		if(MovePair[cutOff_idx].first >= maxRCLFit) {
+			break;
+		} else {
+			cutOff_idx++;
+		}
+	}
+	
+	// choose an pair from the RCL randomly
+	int idx_GRASP = rng.random(cutOff_idx + 1);
+	
+	// set idx_pos and idx_move to values from the choosen RCL Element
+	int idx_move = MovePair[idx_GRASP].second;
+	int idx_pos  = Moves[idx_move];
+		
+	/*// DEBUG	
+	std::cout << "idx_move    : " << idx_move << std::endl;
+	std::cout << "CutOff Index: " << cutOff_idx << std::endl;
+	std::cout << "idx_GRASP   : " << idx_GRASP << "--> Fitness: " << MovePair[idx_GRASP].first << " Pos: " << MovePair[idx_GRASP].second << std::endl;
+	std::cout << "idx_pos     : " << idx_pos << "--> Moves[idx-move] = " << Moves[idx_move] << std::endl;
+	std::cout << "DEBUG: Erasing Move with idx " << idx_move << " (Position " << idx_pos << ") @ Moves.size = " << Moves.size() << std::endl;	
+	// */
+		
+	// erase the best move from the move list
+	Moves.erase(Moves.begin() + idx_move);
+	
+	//std::cout << "DEBUG: Setting Neighbor to Position " << idx_pos << std::endl;
+	
+	// set neighbot to selected move
+	if (idx_pos > 0) {
+		nh.setPosition(idx_pos-1);
+		nh.next(*_problem, n);
+	} else { // if position zero had the best improvement
+		nh.init(*_problem, n);
+	}
+	
+	//std::cout << "DEBUG: Executing Move ..." << std::endl;
+	
+	// evaluate and execute this move
+	// re evaluation is needed b/c neighborhood was moved around and Fitness needs to be set
+	DoIncrEval(*_problem, n, sol_target);
+	n.move(*_problem, sol_target);
 }
 

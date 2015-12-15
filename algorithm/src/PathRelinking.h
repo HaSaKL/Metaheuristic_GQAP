@@ -10,6 +10,11 @@
 #include "PR_IncrEval.h"
 #include "PR_Neighbor.h"
 
+#include "GRASP_Alpha.h"
+#include "GRASP_FixedAlpha.h"
+#include "GRASP_ReactiveAlpha.h"
+#include "GRASP_UniformRandomAlpha.h"
+
 #include <neighborhood/moOrderNeighborhood.h>
 
 class PathRelinking: public PR_IncrEval
@@ -34,6 +39,8 @@ private:
 	GQAP_Solution sol_target;
 	GQAP_Solution sol_best;
 	
+	GRASP_Alpha * alpha_gen;
+	
 	std::vector<int> ConstructMoves();
 	
 	bool CheckDirection(const int _direction);
@@ -50,10 +57,13 @@ private:
 	void DoGreedyMove(std::vector<int> & Moves);
 	void DoGRASPMove(std::vector<int> & Moves);
 	
+	typedef std::pair<double, int> MovePairType;
 	
 public:
 	PathRelinking(int _direction, int _selectMethod);
 	PathRelinking();
+	~PathRelinking();
+	
 	void PR_Init(int _direction, int _selectMethod);
 	void operator() (GQAP *_ptr_problem, GQAP_Solution _sol_target);
 	
