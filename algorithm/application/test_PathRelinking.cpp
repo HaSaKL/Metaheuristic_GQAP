@@ -47,7 +47,7 @@ int main(int argc, char* argv[]) {
 		// Intialize the Path-Relinking with Forward-PR and Random Move
 		PathRelinking PR(2,0);
 		
-		// make a new solution and Path-Relink it with the first solution in the pool
+		// make a new solution and Path-Relink it with the most diverse in the pool
 		p.RandomInit();
 		FullEval(p);
 		
@@ -80,6 +80,31 @@ int main(int argc, char* argv[]) {
 		} else {
 			std::cout << "NO, no better solution" << std::endl;
 		}
+		
+		
+		
+		std::cout << std::endl << std::endl << std::endl;
+		std::cout << "RUNNING A PR FOR A RANDOM SOLUTION VS. ALL POOL-MEMBERS" << std::endl;
+		
+		p.RandomInit();
+		FullEval(p);
+		PR.PR_Init(2,0);
+		
+		GQAP_Solution tmp = GQAP_Solution(p);
+		GQAP_Solution best = tmp;
+		
+		for (int i = 0; i < Pool.GetSize(); i++) {
+			p = tmp;
+			PR(& p, Pool.GetSolution(i));
+			
+			if( p > best) {
+				best = GQAP_Solution(p);
+			}
+		}
+		
+		std::cout << "Best Solution found: ";
+		p.printSolution(); 
+		p.printFitness();
 		
 	}	
 	catch(std::exception& e) {
