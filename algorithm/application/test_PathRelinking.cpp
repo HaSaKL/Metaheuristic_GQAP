@@ -21,8 +21,8 @@ int main(int argc, char* argv[]) {
 		
 		std::cout << "Loading Problem \"";
 		
-		//std::string fileName = "../../../test_instances/own_instances/mini_test_instances/4-2.txt";
-		std::string fileName = "../../../test_instances/from_literature/original_format/cordeau/20-15-35.txt";
+		std::string fileName = "../../../test_instances/own_instances/mini_test_instances/4-2.txt";
+		//std::string fileName = "../../../test_instances/from_literature/original_format/cordeau/20-15-35.txt";
 		std::cout << fileName << "\"" << std::endl;
 		
 		// Initialize Problem
@@ -132,6 +132,31 @@ int main(int argc, char* argv[]) {
 		p.printSolution(); 
 		p.printFitness();
 		
+		
+		
+		
+		std::cout << std::endl << std::endl << std::endl;
+		std::cout << "RUNNING A PR FOR A RANDOM SOLUTION VS. ALL POOL-MEMBERS WITH GRASP MOVE SELECTOR AND MIXED-DIRECTON" << std::endl;
+		
+		p.RandomInit();
+		FullEval(p);
+		PR.PR_Init(2,2);
+		
+		tmp = GQAP_Solution(p);
+		best = tmp;
+		
+		for (int i = 0; i < Pool.GetSize(); i++) {
+			p = tmp;
+			PR(& p, Pool.GetSolution(i));
+			
+			if( p > best) {
+				best = GQAP_Solution(p);
+			}
+		}
+		
+		std::cout << "Best Solution found: ";
+		p.printSolution(); 
+		p.printFitness();
 	}	
 	catch(std::exception& e) {
 		std::cout << "Expectation cought: ";
