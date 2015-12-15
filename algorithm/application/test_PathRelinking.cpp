@@ -21,8 +21,8 @@ int main(int argc, char* argv[]) {
 		
 		std::cout << "Loading Problem \"";
 		
-		std::string fileName = "../../../test_instances/own_instances/mini_test_instances/4-2.txt";
-		//std::string fileName = "../../../test_instances/from_literature/original_format/cordeau/20-15-35.txt";
+		//std::string fileName = "../../../test_instances/own_instances/mini_test_instances/4-2.txt";
+		std::string fileName = "../../../test_instances/from_literature/original_format/cordeau/20-15-35.txt";
 		std::cout << fileName << "\"" << std::endl;
 		
 		// Initialize Problem
@@ -84,7 +84,7 @@ int main(int argc, char* argv[]) {
 		
 		
 		std::cout << std::endl << std::endl << std::endl;
-		std::cout << "RUNNING A PR FOR A RANDOM SOLUTION VS. ALL POOL-MEMBERS" << std::endl;
+		std::cout << "RUNNING A PR FOR A RANDOM SOLUTION VS. ALL POOL-MEMBERS WITH RANDOM MOVE SELECTION MIXED-DIRECTION" << std::endl;
 		
 		p.RandomInit();
 		FullEval(p);
@@ -92,6 +92,32 @@ int main(int argc, char* argv[]) {
 		
 		GQAP_Solution tmp = GQAP_Solution(p);
 		GQAP_Solution best = tmp;
+		
+		for (int i = 0; i < Pool.GetSize(); i++) {
+			p = tmp;
+			PR(& p, Pool.GetSolution(i));
+			
+			if( p > best) {
+				best = GQAP_Solution(p);
+			}
+		}
+		
+		std::cout << "Best Solution found: ";
+		p.printSolution(); 
+		p.printFitness();
+		
+		
+		
+		
+		std::cout << std::endl << std::endl << std::endl;
+		std::cout << "RUNNING A PR FOR A RANDOM SOLUTION VS. ALL POOL-MEMBERS WITH GREEDY MOVE AND MIXED-DIRECTON" << std::endl;
+		
+		p.RandomInit();
+		FullEval(p);
+		PR.PR_Init(2,1);
+		
+		tmp = GQAP_Solution(p);
+		best = tmp;
 		
 		for (int i = 0; i < Pool.GetSize(); i++) {
 			p = tmp;
