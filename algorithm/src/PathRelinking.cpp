@@ -285,8 +285,8 @@ void PathRelinking::SetSelectMethod(const int _selectMethode) {
 void PathRelinking::DoMove(std::vector<int> & Moves) {
 	switch (PR_selectMethod) {
 		case PRMethRandom: DoRandomMove(Moves); break;
-		//case PRMethGreedy: return selectGreedyMove(Moves, sol_target, sol_start); break;
-		//case PRMethGRASP : return selectGRASPMove(Moves, sol_target, sol_start); break;
+		case PRMethGreedy: return DoGreedyMove(Moves); break;
+		case PRMethGRASP : return DoGRASPMove(Moves); break;
 	}
 }
 
@@ -327,10 +327,77 @@ void PathRelinking::DoRandomMove(std::vector<int> & Moves) {
 	n.move(*_problem,sol_target);
 }
 
-/*
+
 void PathRelinking::DoGreedyMove(std::vector<int> & Moves) {
+	// Evaluate all possible moves and do the best move
+	
+	int idx_pos;	// Holding Position of best Move
+	int idx_move;	// Holding Index of best Move in Move-Vector
+	
+	// Holds the best Improvement
+	double bestVal = std::numeric_limits<double>::max() - 1;
+	
+	// initialize the neighbor hood for the current solution
+	nh.init(*_problem, n);
+	
+	for (int i = 0; i < Moves.size(); i++) {
+		
+		// set position of current move. Must not be realized for move zero, 
+		// which is supposed to be the first if it is valid at all! 
+		// This is ensured by ConstructMoves
+		
+		if (Moves[i] > 0) {
+			nh.setPosition(Moves[i]-1); // set to -1 so next can jump to correct solution
+			nh.next(*_problem, n);
+		}
+		
+		/*// DEBUG
+		std::cout << "DEBUG: DoIncrEval..." << std::endl;
+		std::cout << "Position in NH: " << nh.position() << std::endl;
+		std::cout << "Current Fitness: " << _problem->fitness() << std::endl << std::endl;
+		//*/
+		
+		// Evaluate move
+		DoIncrEval(*_problem, n, sol_target);
+		
+		//std::cout << "DEBUG: Testing for and setting best move against neighbor fitness: " << bestVal << " (Position " <<  idx_move << ") > " << n.fitness() << std::endl;
+		
+		// set the best move
+		if (bestVal > n.fitness()) {
+			
+			//std::cout << "DEBUG:: Setting best val " << std::endl;
+			
+			bestVal = n.fitness();
+			
+			//std::cout << "DEBUG: Accessing Moves[" << i << "]" << std::endl << std::endl;
+			
+			idx_pos = Moves[i];
+			idx_move = i;
+		}
+	}
+		
+	//std::cout << "DEBUG: Erasing Move with idx " << idx_move << " (Position " << Moves[idx_move] << ")" << std::endl;	
+		
+	// erase the best move from the move list
+	Moves.erase(Moves.begin() + idx_move);
+	
+	//std::cout << "DEBUG: Setting Neighbor to Position " << idx_pos << std::endl;
+	
+	// set neighbot to best known move
+	if (idx_pos > 0) {
+		nh.setPosition(idx_pos-1);
+		nh.next(*_problem, n);
+	} else { // if position zero had the best improvement
+		nh.init(*_problem, n);
+	}
+	
+	//std::cout << "Executing Move ..." << std::endl;
+	
+	// execute this move
+	n.move(*_problem, sol_target);
 }
 
-void PathRelinking::DOGRASPMove(std::vector<int> & Moves) {
+
+void PathRelinking::DoGRASPMove(std::vector<int> & Moves) {
 }
-*/
+

@@ -47,8 +47,8 @@ private:
 	
 	void DoMove(std::vector<int> & Moves);
 	void DoRandomMove(std::vector<int> & Moves);
-	//void DoGreedyMove(std::vector<int> & Moves);
-	//void DoGRASPMove(std::vector<int> & Moves);
+	void DoGreedyMove(std::vector<int> & Moves);
+	void DoGRASPMove(std::vector<int> & Moves);
 	
 	
 public:
