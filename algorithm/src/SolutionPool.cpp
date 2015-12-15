@@ -280,3 +280,19 @@ GQAP_Solution SolutionPool::GetBestSolution() {
 	
 	return Pool.back();
 }
+
+GQAP_Solution SolutionPool::GetSolution() {
+	// return best solution when called without an argument
+	
+	return GetBestSolution();
+}
+
+GQAP_Solution SolutionPool::GetSolution(int i) {
+	// return solution i from the bool
+	
+	if (i >= maxPoolSize) {
+		throw std::runtime_error("ERROR: Trying to return a solution in the solution pool with index greater or equal to maximum pool size.");
+	} 
+	
+	return Pool[i];
+}

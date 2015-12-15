@@ -12,8 +12,8 @@ private:
 	int maxPoolSize;
 	
 	bool IsInPool(const GQAP_Solution sol);
-	bool IsEqual(const GQAP_Solution sol1, const GQAP_Solution sol2);
-	bool HasBetterFitness(const GQAP_Solution sol, const GQAP_Solution sol_ref);
+	bool IsEqual(GQAP_Solution sol1, GQAP_Solution sol2);
+	bool HasBetterFitness(GQAP_Solution sol, GQAP_Solution sol_ref);
 	
 	int CalculateHammingDistance(GQAP_Solution sol1, GQAP_Solution sol2);
 	
@@ -44,6 +44,8 @@ public:
 	GQAP_Solution GetBestSolution();
 	GQAP_Solution GetMostDiverseSolution(GQAP_Solution sol);
 	GQAP_Solution GetRandomSolution();
+	GQAP_Solution GetSolution();
+	GQAP_Solution GetSolution(int i);
 	
 	void PrintPool();
 };
