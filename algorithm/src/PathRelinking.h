@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+#include "GQAP_CLI.h"
+
 #include "SolutionPool.h"
 #include "GQAP_Solution.h"
 #include "GQAP.h"
@@ -20,16 +22,6 @@
 class PathRelinking: public PR_IncrEval
 {
 private:
-	// FIXME: Move constants to somewhere else? e.g. in the CLI.h?
-	// this could also save the CheckDirection and CheckSelectMethod functions
-	static const int PRDirForward 	= 0;
-	static const int PRDirBackward 	= 1;
-	static const int PRDirMixed 	= 2;
-	
-	static const int PRMethRandom = 0;
-	static const int PRMethGreedy = 1;
-	static const int PRMethGRASP  = 2;
-	  
 	int PR_direction;
 	int PR_selectMethod;
 	
