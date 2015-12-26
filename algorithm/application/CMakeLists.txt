@@ -24,3 +24,7 @@ target_link_libraries(TEST_POOL lGQAP)
 add_executable(TEST_PR test_PathRelinking.cpp)
 target_link_libraries(TEST_PR ${PARADISEO_LIBRARIES})
 target_link_libraries(TEST_PR lGQAP)
+
+add_executable(TEST_CLI test_CLI.cpp)
+target_link_libraries(TEST_CLI ${PARADISEO_LIBRARIES})
+target_link_libraries(TEST_CLI lGQAP)
