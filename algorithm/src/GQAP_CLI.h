@@ -272,6 +272,7 @@ inline void parseFile(eoParser & parser, parameters & param) {
 		"Size of the Elite Solution Set for Path-Relinking",
 		'P');
 	parser.processParam(PRPoolSize, "Path-Relinking");
+	param.PRPoolSize = PRPoolSize.value();
 		
 	eoValueParam<char> PRPoolSelect ('r',
 		"PRPoolSelect",
@@ -319,7 +320,7 @@ inline void parseFile(eoParser & parser, parameters & param) {
 			break;
 			
 		case 'V':
-			if (!parser.isItThere(targetValue) || !parser.isItThere(maxRuntime)) {
+			if (!parser.isItThere(maxRuntime)) {
 				throw std::runtime_error("ERROR: You need to set a Maximum Runtime for the Target Value Search.");
 			}
 			if (!parser.isItThere(numRepetitions)) {
@@ -330,7 +331,7 @@ inline void parseFile(eoParser & parser, parameters & param) {
 			break;
 			
 		case 'I':
-			if (!parser.isItThere(targetValue) || !parser.isItThere(maxIterations)) {
+			if (!parser.isItThere(maxIterations)) {
 				throw std::runtime_error("ERROR: You need to set a Maximmum Nummber of Iterations for the Target Value Search");
 			}
 			if (!parser.isItThere(numRepetitions)) {
@@ -492,6 +493,12 @@ inline void parseFile(eoParser & parser, parameters & param) {
 		
 		default:
 			throw std::runtime_error("ERROR: Specify a Pool Selection Criterion.");
+	}
+	
+	if (param.PRMeth != PRMethNone) {
+		if (param.PRPoolSize <= 0) {
+			throw std::runtime_error("ERROR: Please make sure to use Pool Size greater than 0");
+		}
 	}
 } 
 
