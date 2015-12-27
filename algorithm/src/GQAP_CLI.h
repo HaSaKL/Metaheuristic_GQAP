@@ -55,7 +55,7 @@ struct parameters {
 	std::string problemFile;
 	
 	// Output File
-	std::string outputFile;
+	std::string resultsFile;
 	
 	
 	// Status File
@@ -164,12 +164,12 @@ inline void parseFile(eoParser & parser, parameters & param) {
 	parser.processParam(problemFile, "IO");
 	param.problemFile = problemFile.value();
 	
-	eoValueParam<std::string> outputFile(std::string("output.csv"),
+	eoValueParam<std::string> resultsFile(std::string("output.csv"),
 		"resultsFile",
 		"Path to the results output file",
 		'o');
-	parser.processParam(outputFile, "IO");
-	param.outputFile = outputFile.value();
+	parser.processParam(resultsFile, "IO");
+	param.resultsFile = resultsFile.value();
 		
 		
 	eoValueParam<char> stoppingCriterion('i',
@@ -263,7 +263,7 @@ inline void parseFile(eoParser & parser, parameters & param) {
 	eoValueParam<char> PRMeth('r',	
 		"PRMeth",
 		"Move Selector for Path-Relinking",
-		'm',
+		'e',
 		true);
 	parser.processParam(PRMeth, "Path-Relinking");
 		
@@ -277,7 +277,7 @@ inline void parseFile(eoParser & parser, parameters & param) {
 	eoValueParam<char> PRPoolSelect ('r',
 		"PRPoolSelect",
 		"Method of Selection from Pool for Path-Relinking",
-		'M');
+		'E');
 	parser.processParam(PRPoolSelect,"Path-Relinkin");
 	
 	
@@ -451,9 +451,6 @@ inline void parseFile(eoParser & parser, parameters & param) {
 			break;
 		
 		case 'n':
-			if (!parser.isItThere(PRDir)) {
-				throw std::runtime_error("ERROR: Please specify a Path-Relinking Direction as well!");
-			}
 			param.PRMeth = PRMethNone;
 			break;
 			
