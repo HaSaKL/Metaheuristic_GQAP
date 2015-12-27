@@ -21,7 +21,7 @@ int main(int argc, char* argv[]) {
 		std::cout << "Random Seed:          " << param.seed << std::endl << std::endl;
 		
 		std::cout << "Problem File to load: " << param.problemFile << std::endl;
-		std::cout << "Output File name:     " << param.outputFile << std::endl << std::endl;
+		std::cout << "Output File name:     " << param.resultsFile << std::endl << std::endl;
 		
 		std::cout << "Number of Repetions:  " << param.numRepetition << std::endl << std::endl;
 		
