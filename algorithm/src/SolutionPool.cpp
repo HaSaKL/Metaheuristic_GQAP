@@ -4,6 +4,8 @@ SolutionPool::SolutionPool(int maxSize) {
 	maxPoolSize = maxSize;
 	
 	Pool = std::vector<GQAP_Solution>();
+	
+	Pool.reserve(maxPoolSize);
 }
 
 SolutionPool::~SolutionPool() {
@@ -37,7 +39,7 @@ bool SolutionPool::Add(GQAP_Solution sol) {
 	// not been reached. once the Pool is full, a solution is always added
 	// if it has the a better fitness value then the best known value, if it 
 	// is at least better then the worse value in the pool it will replace an
-	// element which has no higher firness value and is most similar to the entering
+	// element which has no higher fitness value and is most similar to the entering
 	// solution, if there is any. Otherwise it will not enter the pool
 	
 	// If Pool is not full, solutions will always be added
