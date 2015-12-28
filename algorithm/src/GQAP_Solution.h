@@ -18,6 +18,10 @@ public:
 		solution = eoVector<eoMinimizingFitness, int>(0,0);
 	}
 	
+	GQAP_Solution(const GQAP_Solution & _sol) {
+		operator =(_sol);
+	}
+	
 	void printFitness() {
 		if (!invalid()) {
 			std::cout << "Fitness: " << fitness() << std::endl;
@@ -48,6 +52,14 @@ public:
 		}
 		
 		return true;
+	}
+	
+	bool operator< (const GQAP_Solution & rhs) const {
+		if (fitness() < rhs.fitness() ) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	void operator= (const GQAP_Solution new_sol) {
