@@ -31,11 +31,14 @@ public:
 	}
 
 	void printSolution() {
-		std::cout << "Solution: ";
-		for (int i = 0; i < solution.size()-1; i++) {
-			std::cout << solution[i] << " ; ";
+		if (solution.size() > 1) {
+			for (int i = 0; i < solution.size()-1; i++) {
+				std::cout << solution[i] << " ; ";
+			}
+			std::cout << solution.back() << std::endl;
+		} else {
+			std::cout << "Solution to small to print" << std::endl;
 		}
-		std::cout << solution.back() << std::endl;
 	}
 	
 	bool operator== (const GQAP_Solution sol_ref) { 
@@ -62,7 +65,7 @@ public:
 		}
 	}
 	
-	void operator= (const GQAP_Solution new_sol) {
+	void operator= (const GQAP_Solution & new_sol) {
 		solution.resize(new_sol.solution.size());
 		
 		for (int i = 0; i <= solution.size(); i++) {
