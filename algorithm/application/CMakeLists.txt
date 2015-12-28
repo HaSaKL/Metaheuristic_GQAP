@@ -28,3 +28,7 @@ target_link_libraries(TEST_PR lGQAP)
 add_executable(TEST_CLI test_CLI.cpp)
 target_link_libraries(TEST_CLI ${PARADISEO_LIBRARIES})
 target_link_libraries(TEST_CLI lGQAP)
+
+add_executable(GRASP_Solver_T2T GQAP_GRASP_Solver_TimeToTarget.cpp)
+target_link_libraries(GRASP_Solver_T2T ${PARADISEO_LIBRARIES})
+target_link_libraries(GRASP_Solver_T2T lGQAP)
