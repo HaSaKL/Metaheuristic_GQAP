@@ -613,3 +613,17 @@ double GQAP::GRASPCalculateCostIncrease(Assignment& _assign) {
 	
 	return totalIncrease;
 }
+
+GQAP_Solution GQAP::GetSolution() const {
+	GQAP_Solution tmp;
+	
+	tmp.solution.resize(GetNumEquip());
+	
+	for (int i = 0; i <= solution.size(); i++) {
+		tmp.solution[i] = solution[i];
+	}
+		
+	tmp.fitness(fitness());
+	
+	return tmp;
+}

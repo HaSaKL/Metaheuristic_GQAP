@@ -38,6 +38,8 @@ public:
 
 
 	// Getter and Setter Methods
+	GQAP_Solution GetSolution() const;
+	
 	int GetNumLocation() const;
 
 	int GetNumEquip() const;
