@@ -20,6 +20,9 @@ set (GQAP_SOURCES
 			PathRelinking.cpp
 			PR_Neighbor.cpp
 			PR_IncrEval.cpp
+			
+			GQAP_CLI.h
+			GQAP_GRASP_Algo.cpp
 		)
 				
 set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
