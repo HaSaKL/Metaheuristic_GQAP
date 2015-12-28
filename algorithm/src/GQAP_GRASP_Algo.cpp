@@ -176,21 +176,20 @@ void GQAP_GRASP_Algo::RunTimeToTarget() {
 	clock_t t;						// clock ticker
 	double timeToTarget;			// holds runtime of singel t2t-runs
 	
-	// Open Output File and write header of results table if file is empty
-	std::ofstream resultsFile;
-	resultsFile.open(param.resultsFile.c_str(), std::ios::app);
-	if (resultsFile.tellp() == 0) {	// if file is empty
-		resultsFile << "Problem; StartSol; LSStrategy; PRMeth; PRDir; PRPoolSelect; Time; Iterations" << std::endl;
-	}
-	
-	// Print header for console output
-	std::cout << "Time; Iterations; Repetition" << std::endl;
-	
 	// See if a target has to been found first
 	// in this case the constructor did already set the valid 
 	// stopping criterion. The value needs to be calculated and set as
 	// new stopping criterion
 	if ( (param.stoppingCriterion == StoppingCriterionValueIterations) || (param.stoppingCriterion == StoppingCriterionValueTime)) {
+		
+		// Announce Targte-value search
+		std::cout << "Starting Time-To-Target Search without Target Value." << std::endl;
+		std::cout << "Running GRASP for ";
+		if (param.stoppingCriterion == StoppingCriterionValueIterations) {
+			std::cout << param.maxIterations << " Iterations to Find a Target First ..." << std::endl;
+ 		} else {
+			std::cout << param.maxRuntime << " Seconds to Find a Target First ..." << std::endl;
+		}
 		
 		// Run Algorithm Once to find a Solution
 		GQAP_Solution tmpSol;
@@ -200,7 +199,21 @@ void GQAP_GRASP_Algo::RunTimeToTarget() {
 		// delete the old continuator and set a new value continuator for time-to-target
 		delete cont;
 		cont = new moFitContinuator<GQAP_ElementFlipIndex_Neighbor>(tmpSol.fitness() + pow(10,-6));
+		param.targetValue = tmpSol.fitness();
+		
+		// write result to output
+		std::cout << "Target Value found! Using " << tmpSol.fitness() << " as Target Value " << std::endl;
 	}
+	
+	// Open Output File and write header of results table if file is empty
+	std::ofstream resultsFile;
+	resultsFile.open(param.resultsFile.c_str(), std::ios::app);
+	if (resultsFile.tellp() == 0) {	// if file is empty
+		resultsFile << "Problem; StartSol; LSStrategy; PRMeth; PRDir; PRPoolSelect; Time; Iterations; Target; Result" << std::endl;
+	}
+	
+	// Print header for console output
+	std::cout << "Time; Iterations; Repetition" << std::endl;
 	
 	// do time-to-target runs for defined number of repetitions
 	for (int i = 0; i < param.numRepetition; i++) {
@@ -228,9 +241,10 @@ void GQAP_GRASP_Algo::RunTimeToTarget() {
 		std::cout << timeToTarget << " ms; \t " << itCounter << " iterations; \t repetition " << i << std::endl;
 		
 		// write results to file
-		resultsFile << param.problemFile << "; " << param.StartSol << "; " << param.LSStrategy << "; ";
-		resultsFile << param.PRMeth << "; " << param.PRDir << "; " << param.PRPoolSelect << "; ";
-		resultsFile << timeToTarget << "; " << itCounter << std::endl;
+		resultsFile << param.problemFile << "; " << int(param.StartSol) << "; " << int(param.LSStrategy)<< "; ";
+		resultsFile << int(param.PRMeth) << "; " << int(param.PRDir) << "; " << int(param.PRPoolSelect) << "; ";
+		resultsFile << timeToTarget << "; " << itCounter << "; ";
+		resultsFile << param.targetValue << "; " << p->fitness() << "; " << std::endl;
 	}
 	
 	// close results file
