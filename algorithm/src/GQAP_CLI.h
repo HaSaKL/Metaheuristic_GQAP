@@ -395,11 +395,11 @@ inline void parseFile(eoParser & parser, parameters & param) {
 				throw std::runtime_error("ERROR: Maximum Alpha should be larger then Minimum Alpha and between zero and one");
 			}
 			param.maxAlpha = maxAlpha.value();
-			if (numAlpha.value() >= 1) {
+			if (numAlpha.value() < 1) {
 				throw std::runtime_error("ERROR: Number of different Alphase should at least be 1");
 			}
 			param.numAlpha = numAlpha.value();
-			if (itsReCalcAlpha.value() >= 1) {
+			if (itsReCalcAlpha.value() < 1) {
 				throw std::runtime_error("ERROR: Number Iterations to Alpha-Probability Recalculation should at least be 1");
 			}
 			param.itsReCalcAlpha = itsReCalcAlpha.value();
