@@ -4,22 +4,39 @@
 
 GQAP_GRASP_Algo::GQAP_GRASP_Algo(parameters _param) {
 	
+	//std::cout << "DEBUG: Constuctor Called. Now inside Constructor." << std::endl;
+	
 	// copy the parameters
 	param = _param;
+	
+	//std::cout << "DEBUG: Constructing Problem " << std::endl;
 	
 	// read the problem data and save an arbitrary solution as best
 	p = new GQAP(param.problemFile);
 	
+	//std::cout << "DEBUG: Init best Solution " << std::endl;
+	
 	// initialize the best Solution to a random solution
+	//std::cout << "DEBUG: Init Random Init p " << std::endl;
 	p->RandomInit();
+	//std::cout << "DEBUG: Full Eval p " << std::endl;
 	fullEval(*p);
-	bestSol = *p;
+	//std::cout << "DEBUG: Assignment *p to randSol " << std::endl;
+	randSol = p->GetSolution();
+	//std::cout << "DEBUG: Assignment bestSol to randSol " << std::endl;
+	bestSol = randSol;
+	
+	//std::cout << "DEBUG: Init incrEval " << std::endl;
 	
 	// Initialize the Incremental Evaluation Function
 	incrEval = new GQAP_ElementFlip_IncrEval(*p);
 	
+	//std::cout << "DEBUG: Setting NH-Size " << std::endl;
+	
 	// Calculate Neighborhood Size
 	NeighborhoodSize = p->GetNumEquip() * (p->GetNumLocation() - 1);
+	
+	//std::cout << "DEBUG: Init LS" << std::endl;
 	
 	// setup local search algorithm
 	switch(param.LSStrategy) {
@@ -34,9 +51,12 @@ GQAP_GRASP_Algo::GQAP_GRASP_Algo(parameters _param) {
 			break;
 			
 		case LSStrategyNone:
+			nh = new moOrderNeighborhood<GQAP_ElementFlipIndex_Neighbor>(1);
 			ls = new moDummyLS<GQAP_ElementFlipIndex_Neighbor>(fullEval);
 			break;
 	}
+	
+	//std::cout << "DEBUG: Init Continuator" << std::endl;
 	
 	// setup the continuator
 	switch(param.stoppingCriterion) {
@@ -64,6 +84,8 @@ GQAP_GRASP_Algo::GQAP_GRASP_Algo(parameters _param) {
 			break;
 	}
 	
+	//std::cout << "DEBUG: Init Alpha" << std::endl;
+	 
 	// setup the alpha-generator
 	switch(param.StartSol) {
 		case StartSolGRASPFixed:
@@ -87,7 +109,14 @@ GQAP_GRASP_Algo::GQAP_GRASP_Algo(parameters _param) {
 			break;
 	}
 	
-	// FIXME: setup the path-relinking, don't forget the solution pool
+	//std::cout << "DEBUG: Init Pool" << std::endl;
+	
+	Pool = new SolutionPool(param.PRPoolSize);
+	
+	if (param.PRMeth != PRMethNone) {
+		//std::cout << "DEBUG: Init PR" << std::endl;
+		PR = new PathRelinking(param.PRDir, param.PRMeth);
+	}
 }
 
 GQAP_GRASP_Algo::~GQAP_GRASP_Algo() {
@@ -98,7 +127,12 @@ GQAP_GRASP_Algo::~GQAP_GRASP_Algo() {
 	delete ls;
 	delete alpha;
 	
-	//FIXME: delete the path relinking
+	delete Pool;
+	
+	// only delete pool parameters if they have been defined. Otherwise: segmentation fault
+	if (param.PRMeth != PRMethNone) {
+		delete PR;
+	}
 }
 
 
@@ -114,13 +148,49 @@ void GQAP_GRASP_Algo::GRASPIteration() {
 	// Do the Local Search
 	ls->operator ()(*p);
 	
-	// FIXME: Add the Path-Relinking!
+	// Do the Path-Relining, if required
+	if (param.PRMeth != PRMethNone) {
+		
+		// check if solution can be added to the pool
+		// this will make sure, that the pool will be filled first
+		bool addedToPool = Pool->Add(*p);
+		
+		// if not good enough for the pool, do the path relinking using PRPoolSelection Method provided by the parameter
+		if (!addedToPool) {
+			switch(param.PRPoolSelect) {
+				case PRPoolSelectDiverse:
+					// PR against the most diverse solution and try to add result
+					PR->operator ()(p, Pool->GetMostDiverseSolution(*p));
+					Pool->Add(*p);
+					break;
+					
+				case PRPoolSelectRandom:
+					// PR against a random solution from the pool and try to add result
+					PR->operator ()(p, Pool->GetRandomSolution());
+					Pool->Add(*p);
+					break;
+				
+				case PRPoolSelectAll:
+					// make a copy of the current solution
+					GQAP_Solution currSol = p->GetSolution();
+					
+					// PR every solution in the pool against current solution and try to add the result
+					for (int i = 0; i < Pool->GetSize(); i++) {
+						*p = currSol;
+						PR->operator ()(p, Pool->GetSolution(i));
+						Pool->Add(*p);
+					}
+					
+					break;
+			}
+		}
+	}
 }
 
 // Silent run of the algorithm as defined in the parameters. Solution Values and Runtime are saved in the call parameters
 void GQAP_GRASP_Algo::Run(GQAP_Solution & _Sol, double & _Runtime) {
 	
-	// save a random solution as the best solution
+	// save a random solution as the best solution in constructor. This can now be overwritten with tmpSol (currentSol)
 	GQAP_Solution tmpSol;
 	
 	// setup timers
@@ -140,8 +210,7 @@ void GQAP_GRASP_Algo::Run(GQAP_Solution & _Sol, double & _Runtime) {
 	do {
 		
 		GRASPIteration();
-		tmpSol = *p;
-		
+		tmpSol = p->GetSolution();
 		if(tmpSol > bestSol) {
 			bestSol = tmpSol;
 		}
@@ -152,9 +221,29 @@ void GQAP_GRASP_Algo::Run(GQAP_Solution & _Sol, double & _Runtime) {
 	t = clock_t() - t;
 	elapsedTime = double(t) *1000 / (CLOCKS_PER_SEC);
 	
+	// check pool for best solution in case Path-Relinking was carried out
+	if(param.PRMeth != PRMethNone) {
+		tmpSol = Pool->GetBestSolution();
+		if (tmpSol > bestSol) {
+			bestSol = tmpSol;
+		}
+	}
+	
 	// save results in function paramerters
 	_Runtime = elapsedTime;
 	_Sol = bestSol;
+	
+	/*// DEBUG
+	std::cout << "DEBUG: Results optained in Run(& _Sol, & _double)" << std::endl;
+	std::cout << "Runtime: " << _Runtime << std::endl;
+	_Sol.printFitness();
+	_Sol.printSolution();
+	
+	std::cout << "DEBUG: Contents of tmpSol: " << std::endl;
+	tmpSol.printFitness();
+	tmpSol.printSolution();
+	std::cout << "DEBUG: Exiting Run(& _Sol, & _double) " << std::endl;
+	// */
 }
 	
 // noisy run of the algorithm (with some output)	
@@ -194,7 +283,24 @@ void GQAP_GRASP_Algo::RunTimeToTarget() {
 		// Run Algorithm Once to find a Solution
 		GQAP_Solution tmpSol;
 		double tmpTime;
+		rng.reseed(param.seed/2);
+		
+		/*// DEBUG
+		std::cout << "Using Random Seed: " << param.seed << std::endl;
+		std::cout << "Starting Run(tmpSol, tmpTime) " << std::endl;
+		std::cout << "Initial Values for tmpSol: " << std::endl;
+		tmpSol.printSolution();
+		tmpSol.printFitness();
+		//*/
+		
 		Run(tmpSol, tmpTime);
+		
+		/* // DEBUG
+		std::cout << "DEBUG: Finished Intial Run in Time-to-Target Loop" << std::endl;
+		std::cout << "DEBUG: Solution:" << std::endl;
+		tmpSol.printFitness();
+		tmpSol.printSolution();
+		// */
 		
 		// delete the old continuator and set a new value continuator for time-to-target
 		delete cont;
@@ -202,12 +308,22 @@ void GQAP_GRASP_Algo::RunTimeToTarget() {
 		param.targetValue = tmpSol.fitness();
 		
 		// write result to output
-		std::cout << "Target Value found! Using " << tmpSol.fitness() << " as Target Value " << std::endl;
+		std::cout << "Target Value found! Using " << param.targetValue << " as Target Value " << std::endl;
 	}
 	
+	
 	// Open Output File and write header of results table if file is empty
+	// std::cout << "DEBUG: Defining Reuslts File: " << std::endl;
+	//std::cout << "DEBUG: Defining Reuslts File: " << std::endl;
+	//std::cout << param.resultsFile.c_str() << std::endl;
 	std::ofstream resultsFile;
-	resultsFile.open(param.resultsFile.c_str(), std::ios::app);
+	
+	//std::cout << "DEBUG: Opening Results File" << std::endl;
+	
+	//resultsFile.open(param.resultsFile.c_str());
+	resultsFile.open(param.resultsFile.c_str(), std::ofstream::out | std::ofstream::app);
+	
+	//std::cout << "DEBUG: Writing First Line if needed " << std::endl;
 	if (resultsFile.tellp() == 0) {	// if file is empty
 		resultsFile << "Problem; StartSol; LSStrategy; PRMeth; PRDir; PRPoolSelect; Time; Iterations; Target; Result" << std::endl;
 	}
@@ -215,12 +331,20 @@ void GQAP_GRASP_Algo::RunTimeToTarget() {
 	// Print header for console output
 	std::cout << "Time; Iterations; Repetition" << std::endl;
 	
+	// Reseed, so that results with same seed and value provided and not provided are better reproducebale
+	// devide by to for reruns --> see EO RNG::RESEED documentation
+	rng.reseed(param.seed/2);
+	
+	std::cout << "Using Random Seed: " << param.seed << std::endl;
+	
 	// do time-to-target runs for defined number of repetitions
+	// std::cout << "DEBUG: Starting Time-To-Target Run " << std::endl;
 	for (int i = 0; i < param.numRepetition; i++) {
 		
-		// (re-)initialize continuator and alpha-generator for next time-to-target run
+		// (re-)initialize continuator and alpha-generator and empty pool for next time-to-target run
 		cont->init(*p);
 		alpha->init(*p);
+		Pool->Clear();
 		
 		// reset counter and start clock
 		itCounter = 0;
@@ -237,6 +361,8 @@ void GQAP_GRASP_Algo::RunTimeToTarget() {
 		t = clock() - t;
 		timeToTarget = double(t) * 1000 / (CLOCKS_PER_SEC);
 		
+		// get best result
+		
 		// print result
 		std::cout << timeToTarget << " ms; \t " << itCounter << " iterations; \t repetition " << i << std::endl;
 		
@@ -248,9 +374,6 @@ void GQAP_GRASP_Algo::RunTimeToTarget() {
 	}
 	
 	// close results file
+	// std::cout << "DEBUG: Closing File.";
 	resultsFile.close();
 }
-
-
-// S W I T C H E S
-

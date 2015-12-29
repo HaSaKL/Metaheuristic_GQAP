@@ -32,6 +32,10 @@
 #include "GRASP_ReactiveAlpha.h"
 #include "GRASP_UniformRandomAlpha.h" 
 
+// Solution Pool and Path-Relinking Classes
+#include "PathRelinking.h"
+#include "SolutionPool.h"
+
 // for time measurement
 #include <time.h>
 
@@ -51,6 +55,7 @@ private:
 	
 	// strcuture for the best known solution
 	GQAP_Solution bestSol;
+	GQAP_Solution randSol;
 	
 	// Neighborhood Size
 	unsigned NeighborhoodSize;
@@ -71,6 +76,11 @@ private:
 	// a pointer to an alpha-generator
 	GRASP_Alpha * alpha;
 
+	// a pointer to the solution pool
+	SolutionPool * Pool;
+	
+	// a pointer to the Path-Relinking procedure
+	PathRelinking * PR;
 	
 public:
 	// Constructors
