@@ -26,8 +26,12 @@ int main(int argc, char* argv[]) {
 				throw std::runtime_error("ERROR. Time2Target-Algorithm: No Target Value or no Valid Combination of Stopping Criterions provided");
 		}
 		
+		//std::cout << "DEBUG: Calling Algorithm Constructor " << std::endl;
+		
 		// Initialize the Algorithm
 		GQAP_GRASP_Algo grasp(param);
+		
+		//std::cout << "DEBUG: Calling Time-to-Target-Method " << std::endl;
 		
 		grasp.RunTimeToTarget();
 	} 
