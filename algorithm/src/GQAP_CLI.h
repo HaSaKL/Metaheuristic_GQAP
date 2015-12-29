@@ -396,7 +396,7 @@ inline void parseFile(eoParser & parser, parameters & param) {
 			}
 			param.maxAlpha = maxAlpha.value();
 			if (numAlpha.value() < 1) {
-				throw std::runtime_error("ERROR: Number of different Alphase should at least be 1");
+				throw std::runtime_error("ERROR: Number of different Alphas should at least be 1");
 			}
 			param.numAlpha = numAlpha.value();
 			if (itsReCalcAlpha.value() < 1) {
@@ -418,8 +418,8 @@ inline void parseFile(eoParser & parser, parameters & param) {
 				throw std::runtime_error("ERROR: Maximum Alpha should be larger then Minimum Alpha and between zero and one");
 			}
 			param.maxAlpha = maxAlpha.value();
-			if (numAlpha.value() >= 1) {
-				throw std::runtime_error("ERROR: Number of different Alphase should at least be 1");
+			if (numAlpha.value() <= 1) {
+				throw std::runtime_error("ERROR: numAlpha needs to be more than one");
 			}
 			param.numAlpha = numAlpha.value();
 			break;
