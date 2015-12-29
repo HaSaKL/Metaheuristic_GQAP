@@ -223,9 +223,10 @@ int SolutionPool::ReturnMostDiverseIdx(GQAP_Solution sol) {
 
 void SolutionPool::Clear(){
 	
-	// empties the Solution Pool
+	// empties the Solution Pool without changing its capacity
 	
 	Pool.clear();
+	Pool.reserve(maxPoolSize);
 }
 
 void SolutionPool::PrintPool() {
