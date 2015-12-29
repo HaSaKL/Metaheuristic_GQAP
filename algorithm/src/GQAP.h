@@ -38,7 +38,7 @@ public:
 
 
 	// Getter and Setter Methods
-	GQAP_Solution GetSolution() const;
+	GQAP_Solution GetSolution();
 	
 	int GetNumLocation() const;
 
