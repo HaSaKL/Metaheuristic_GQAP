@@ -2,6 +2,7 @@
 #define GQAP_SOLUTION_H
 
 #include <eo>
+#include <vector>
 
 // Base class for GQAP Problems. Only contains the 
 // representation of the problem solution and is used for 
@@ -11,17 +12,21 @@ class GQAP_Solution : public EO<eoMinimizingFitness>
 {
 public:
 	// Representation of a solution
-	eoVector<eoMinimizingFitness, int> solution;
+	//eoVector<eoMinimizingFitness, int> solution;
+	std::vector<int> solution;
 	
-	// Ctor
+	// Ctors
 	GQAP_Solution() {
-		solution = eoVector<eoMinimizingFitness, int>(0,0);
+		//solution = eoVector<eoMinimizingFitness, int>(0,0);
 	}
 	
 	GQAP_Solution(const GQAP_Solution & _sol) {
 		operator =(_sol);
 	}
 	
+	~GQAP_Solution() {
+	}
+
 	void printFitness() {
 		if (!invalid()) {
 			std::cout << "Fitness: " << fitness() << std::endl;
@@ -65,10 +70,11 @@ public:
 		}
 	}
 	
-	void operator= (const GQAP_Solution & new_sol) {
+	GQAP_Solution & operator= (const GQAP_Solution & new_sol) {
+		//std::cout << "DEBUG: GQAP_Solution::operator=(&) "  << std::endl;
 		solution.resize(new_sol.solution.size());
 		
-		for (int i = 0; i <= solution.size(); i++) {
+		for (int i = 0; i < solution.size(); i++) {
 			solution[i] = new_sol.solution[i];
 		}
 		
