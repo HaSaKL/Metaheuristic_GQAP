@@ -275,9 +275,9 @@ void GQAP_GRASP_Algo::RunTimeToTarget() {
 		std::cout << "Starting Time-To-Target Search without Target Value." << std::endl;
 		std::cout << "Running GRASP for ";
 		if (param.stoppingCriterion == StoppingCriterionValueIterations) {
-			std::cout << param.maxIterations << " Iterations to Find a Target First ..." << std::endl;
+			std::cout << param.maxIterations << " Iterations to find a Target Value ..." << std::endl;
  		} else {
-			std::cout << param.maxRuntime << " Seconds to Find a Target First ..." << std::endl;
+			std::cout << param.maxRuntime << " Seconds to find a Target Value ..." << std::endl;
 		}
 		
 		// Run Algorithm Once to find a Solution
@@ -328,14 +328,16 @@ void GQAP_GRASP_Algo::RunTimeToTarget() {
 		resultsFile << "Problem; StartSol; LSStrategy; PRMeth; PRDir; PRPoolSelect; Time; Iterations; Target; Result" << std::endl;
 	}
 	
-	// Print header for console output
-	std::cout << "Time; Iterations; Repetition" << std::endl;
 	
 	// Reseed, so that results with same seed and value provided and not provided are better reproducebale
 	// devide by to for reruns --> see EO RNG::RESEED documentation
 	rng.reseed(param.seed/2);
 	
 	std::cout << "Using Random Seed: " << param.seed << std::endl;
+	
+	
+	// Print header for console output
+	std::cout << "Time; \t Iterations; \t Repetition" << std::endl;
 	
 	// do time-to-target runs for defined number of repetitions
 	// std::cout << "DEBUG: Starting Time-To-Target Run " << std::endl;

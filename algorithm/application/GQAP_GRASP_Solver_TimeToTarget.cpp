@@ -16,6 +16,8 @@ int main(int argc, char* argv[]) {
 		// Initialize the RNG with the provided seed
 		rng.reseed(param.seed);
 		
+		std::cout << "Solving Problem: " << param.problemFile << std::endl << std::endl;
+		
 		// check if parameters are set to target value or if one should be found first
 		switch(param.stoppingCriterion) {
 			case StoppingCriterionValue:
