@@ -109,6 +109,8 @@ void SolutionPool::Replace(GQAP_Solution sol, int ReplaceIdx) {
 	// Replaces the current solution with index ReplaceIdx with sol
 	// and sorts the pool according to Fitness
 	
+	std::cout << "DEBUG: SolutionPool::Replace with Replace Idx = " << ReplaceIdx << " and Pool.size = " << Pool.size() << std::endl;
+	
 	Pool[ReplaceIdx] = sol;
 	
 	OrderPool();
@@ -182,7 +184,7 @@ int SolutionPool::ReturnLeastDiverseIdx(GQAP_Solution sol, std::vector<GQAP_Solu
 	}
 	
 	// return a random solution from the set of solutions with the highest diversity
-	return minIndex[ rng.random( minIndex.size() ) ];
+	return minIndex[ rng.random( minIndex.size() - 1) ];
 }
 
 
