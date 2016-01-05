@@ -325,7 +325,7 @@ void GQAP_GRASP_Algo::RunTimeToTarget() {
 	
 	//std::cout << "DEBUG: Writing First Line if needed " << std::endl;
 	if (resultsFile.tellp() == 0) {	// if file is empty
-		resultsFile << "Problem; StartSol; LSStrategy; PRMeth; PRDir; PRPoolSelect; Time; Iterations; Target; Result" << std::endl;
+		resultsFile << "Problem; StartSol; LSStrategy; PRMeth; PRDir; PRPoolSelect; Time; Iterations; Target; Result; PoolSize" << std::endl;
 	}
 	
 	
@@ -373,6 +373,7 @@ void GQAP_GRASP_Algo::RunTimeToTarget() {
 		resultsFile << int(param.PRMeth) << "; " << int(param.PRDir) << "; " << int(param.PRPoolSelect) << "; ";
 		resultsFile << timeToTarget << "; " << itCounter << "; ";
 		resultsFile << param.targetValue << "; " << p->fitness() << "; " << std::endl;
+		resultsFile << param.PRPoolSize << std::endl;
 	}
 	
 	// close results file
