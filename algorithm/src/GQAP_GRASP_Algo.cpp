@@ -372,7 +372,7 @@ void GQAP_GRASP_Algo::RunTimeToTarget() {
 		resultsFile << param.problemFile << "; " << int(param.StartSol) << "; " << int(param.LSStrategy)<< "; ";
 		resultsFile << int(param.PRMeth) << "; " << int(param.PRDir) << "; " << int(param.PRPoolSelect) << "; ";
 		resultsFile << timeToTarget << "; " << itCounter << "; ";
-		resultsFile << param.targetValue << "; " << p->fitness() << "; " << std::endl;
+		resultsFile << param.targetValue << "; " << p->fitness() << "; ";
 		resultsFile << param.PRPoolSize << std::endl;
 	}
 	
