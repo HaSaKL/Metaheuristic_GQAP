@@ -1,4 +1,4 @@
-Problem; StartSol; LSStrategy; PRMeth; PRDir; PRPoolSelect; Time; Iterations; Target; Result
+Problem; StartSol; LSStrategy; PRMeth; PRDir; PRPoolSelect; Time; Iterations; Target; Result;
 20-15-35.txt; 0; 0; 1; 0; 0; 3600; 267; 1.4719e+06; 1.4719e+06; 
 20-15-35.txt; 0; 0; 1; 0; 0; 7830; 579; 1.4719e+06; 1.4719e+06; 
 20-15-35.txt; 0; 0; 1; 0; 0; 3200; 234; 1.4719e+06; 1.4719e+06; 

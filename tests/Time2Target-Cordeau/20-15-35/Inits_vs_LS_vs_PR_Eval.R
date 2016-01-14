@@ -5,7 +5,7 @@ data <- read.csv2(file = "ResultsLS+PR-Tests.csv", dec = ".", strip.white = T,  
 # label data accoring to code book
 data$StartSol <- factor(data$StartSol, 
                         levels = c(0,1,2,3,4),
-                        labels = c("Random Init", "Greedy Init", "GRASP Init (Fixed Alpha)", "GRASP Init (Reactive Alpha)", "GRASP Init (Random Alpha)"))
+                        labels = c("Random init", "Greedy init", "Fixed alpha", "Reactive alpha", "Uniform random alpha"))
 
 data$LSStrategy <- factor(data$LSStrategy,
                           levels = c(0,1,2),
@@ -169,7 +169,7 @@ smry <- mutate(smry, median_Time = median_Time / 1000, mean_Time = mean_Time / 1
 
 png("PoolParameters_vs_Runtime.png",
     width = 16,
-    height = 18,
+    height = 12,
     units = "cm",
     res = 1200,
     pointsize = 12,
@@ -178,7 +178,7 @@ png("PoolParameters_vs_Runtime.png",
 
 ggplot(data = smry, aes(x=PRDir, y=PRPoolSelect, fill=median_Time)) +
   geom_tile() +
-  facet_grid(PRMeth ~ StartSol) +
+  facet_grid(StartSol ~  PRMeth) +
   theme_bw(base_size = 12, base_family = "serif") +
   theme (legend.position = "bottom",
          legend.direction = "horizontal",
@@ -196,6 +196,4 @@ ggplot(data = smry, aes(x=PRDir, y=PRPoolSelect, fill=median_Time)) +
   xlab("Path-Relinking Direction") + 
   ylab("Solution Pool Selector")
   
-
 dev.off()
-
