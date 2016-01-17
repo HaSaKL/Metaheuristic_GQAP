@@ -39,6 +39,8 @@ gr_data <- mutate(gr_data, iter_Time = Time / Iterations)
 
 # summarize data by calculating mean and median values for each module size for viewing pleasure
 smry <- summarise(gr_data, 
+                  min_Time = min(Time),
+                  max_Time = max(Time),
                   mean_Time = mean(Time), 
                   mean_Iterations = mean(Iterations),
                   mean_Iter_Time = mean(iter_Time),
@@ -168,18 +170,18 @@ dev.off()
 smry <- mutate(smry, median_Time = median_Time / 1000, mean_Time = mean_Time / 1000)
 
 png("PoolParameters_vs_Runtime.png",
-    width = 16,
-    height = 12,
+    width = 13,
+    height = 10,
     units = "cm",
     res = 1200,
-    pointsize = 12,
+    pointsize = 10,
     antialias = "cleartype"
 )
 
 ggplot(data = smry, aes(x=PRDir, y=PRPoolSelect, fill=median_Time)) +
   geom_tile() +
   facet_grid(StartSol ~  PRMeth) +
-  theme_bw(base_size = 12, base_family = "serif") +
+  theme_bw(base_size = 10, base_family = "serif") +
   theme (legend.position = "bottom",
          legend.direction = "horizontal",
          legend.background = element_rect(colour = "black"),
@@ -187,10 +189,12 @@ ggplot(data = smry, aes(x=PRDir, y=PRPoolSelect, fill=median_Time)) +
   ) +
   scale_fill_gradient(low="gray10", 
                       high="gray90", 
-                      name = "Median Runtime in seconds", 
+                      name = "Median solution time in seconds", 
+                      trans = "log",
+                      breaks = c(0.75,1.5,3),
                       guide=guide_colorbar(title.vjust = 0.7,
                                            title.position = "top",
-                                           barwidth = 9
+                                           barwidth = 11
                       )
   ) +
   xlab("Path-Relinking Direction") + 

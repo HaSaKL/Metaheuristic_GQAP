@@ -59,28 +59,31 @@ plotdata <- group_by(plotdata, StartSol, LSStrategy, PRMeth, PRDir, PRPoolSelect
 plotdata <- mutate(plotdata, Time = Time / 1000)
 plotdata <- arrange(plotdata, PRMeth, StartSol)
 
+library(ggplot2)
+
 png("Init_vs_Time_Violin_woPR.png",
-    width = 16,
-    height = 11,
+    width = 12,
+    height = 5.5,
     units = "cm",
     res = 1200,
-    pointsize = 12,
+    pointsize = 10,
     antialias = "cleartype"
 )
 
 ggplot(data = plotdata, aes(x=Algo, y=Time)) +
   geom_violin() +
-  geom_boxplot(width=0.2) +
+  geom_boxplot(width=0.1) +
   coord_flip() + 
-  theme_bw(base_size = 12, base_family = "serif") +
+  theme_bw(base_size = 10, base_family = "serif") +
   theme (legend.position = "bottom",
          legend.direction = "horizontal",
          legend.background = element_rect(colour = "black"),
          panel.grid.major = element_blank(),
-         panel.grid.minor = element_blank()
+         panel.grid.minor = element_blank(),
+         axis.title.y = element_blank()
   ) +
-  xlab("Construction heuristic") + 
-  ylab("Runtime in sec")
+  labs(y = "Runtime in sec")
+  
 
 dev.off()
 
