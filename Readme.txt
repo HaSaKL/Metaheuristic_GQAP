@@ -13,7 +13,9 @@ After the compilation all applications can be found in "algorithms/build/applica
 
 The application GRASP_Solver_T2T is used to solve the test instances.
 
-A documentation of the command line parameters can be found in the file CLI.txt
+The application uses the command line interface provieded by the framework.
+A documentation of the command line parameters can be found in the file GQAP_CLI.txt.
+The Bash-scripts running the tests give examples.
 
 The folder "tests" is self contained and holds all tests, compiled GQAP_TimeToTarget, R-Scripts and Bash-Scrips required to run the tests. Examine the Bash-Skrips to see what test are run. Test results are summarized in *.csv-files.
 

@@ -1,0 +1,58 @@
+Long Name		Handle	Value		Meaning/Constant
+
+seed			'R'	unsigned	Random Seed
+
+problemFile		'p'	std::string	Path to Problem File
+
+resultsFile		'o'	std::string	Path to Result Output
+
+statusFile		'S'	std::string	Path to Status File
+
+stoppingCriterion	's'	'i'		StoppingCriterionIterations
+				'v'		StoppingCriterionValue
+				'T'		StoppingCriterionRuntime
+				'V'		StoppingCriterionValueTime
+				'I'		StoppingCriterionValueIterations
+
+maxIter			'i'	unsigned	Maximum Number of Iterations before Stopping
+
+maxTime			'T'	unsigned	Maximum Runtime in seconds before Stopping
+
+tagetValue		'v'	double		Target value for Time-to-Target Search
+
+numRepetitions		'r'	unsigned	Number of Repetitions for Time-to-Target Runs
+
+LSStrategy 		'l'	'b' 		LSStrategyBestImprov
+				'f' 		LSStrategyFirstImprov
+				'n'		LSStratefyNone
+
+StartSol		'a'	'r'		StartSolRandom
+				'g'		StartSolGreedy
+				'f'		StartSolGRASPFixed
+				'R'		StartSolGRASPReactive
+				'U'		StartSolGRASPUniform
+
+fixedAlpha		'f'	double		fixed Alpha Value for GRASP
+
+minAlpha		'm'	double		Minimum Alpha Value for Reactive and Random GRASP
+
+maxAlpha		'M'	double		Maximum Alpha Value for Reactice and Random GRASP
+
+numAlpha		'n'	int		Number of different Alpha Values for Reactive and Random GRASP
+
+itsReCalcAlpha		'I'	int		Number of GRASP-Iterations in Reactive GRASP before Propabilities are Re-evaluated
+
+PRDir			'd'	'f'		PRDirForward
+				'b'		PRDirBackward 
+				'm'		PRDirMixed
+
+PRMeth			'e'	'r'		PRMethRandom
+				'g'		PRMethGreedy
+				'G'		PRMethGRASP
+				'n'		PRMethNone
+
+PRPoolSelect		'E'	'd'		PRPoolSelectDiverse
+				'r'		PRPoolSelectRandom
+				'a'		PRPoolSelectAll
+
+PRPoolSize		'P'	int		Size of the Elite Solution Pool for Path-Relinking
