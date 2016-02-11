@@ -5,6 +5,7 @@
 
 ### CONSTRUCTION ###################################################################
 --StartSol=U                             # -a : Initialization Method REQUIRED 
+--QuickGRASP=1                           # -q : Do quicker GRASP Init
 # --fixedAlpha=0.2                         # -f : Fixed Alpha Value
 --minAlpha=0                             # -m : Minimum Alpha @ Initalization
 --maxAlpha=1                             # -M : Maximum Alpha @ Initalization
@@ -13,7 +14,7 @@
 
 ### IO #############################################################################
 --problemFile=20-15-35.txt               # -p : Path to problem file REQUIRED 
---resultsFile=Test-20-15-35-PR1.csv      # -o : Path to the results output file
+--resultsFile=Test-20-15-35-PR1q.csv     # -o : Path to the results output file
 
 ### LOCAL-SEARCH ###################################################################
 --LSStrategy=f                           # -l : Strategy of the Local Search REQUIRED 
