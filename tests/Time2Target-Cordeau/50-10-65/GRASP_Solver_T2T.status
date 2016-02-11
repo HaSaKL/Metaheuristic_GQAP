@@ -1,0 +1,39 @@
+
+### GENERAL ########################################################################
+# --help=0                                 # -h : Prints this message
+# --stopOnUnknownParam=1                   # Stop if unkown param entered
+
+### CONSTRUCTION ###################################################################
+--StartSol=R                             # -a : Initialization Method REQUIRED 
+--QuickGRASP=1                           # -q : Do quicker GRASP Init
+# --fixedAlpha=0.2                         # -f : Fixed Alpha Value
+--minAlpha=0                             # -m : Minimum Alpha @ Initalization
+--maxAlpha=1                             # -M : Maximum Alpha @ Initalization
+--numAlpha=10                            # -n : Number of different Alpha Values @ Initialization
+--itsReCalcAlpha=2                       # -I : Iterations before New Alpha Probabilties are Calculated for Reacteve GRASP
+
+### IO #############################################################################
+--problemFile=50-10-65.txt               # -p : Path to problem file REQUIRED 
+--resultsFile=Test-50-10-65-PR1q.csv     # -o : Path to the results output file
+
+### LOCAL-SEARCH ###################################################################
+--LSStrategy=f                           # -l : Strategy of the Local Search REQUIRED 
+
+### PATH-RELINKIN ##################################################################
+--PRPoolSelect=d                         # -E : Method of Selection from Pool for Path-Relinking
+
+### PATH-RELINKING #################################################################
+--PRDir=b                                # -d : Direction of Path-Relinking
+--PRMeth=r                               # -e : Move Selector for Path-Relinking REQUIRED 
+# --PRPoolSize=10                          # -P : Size of the Elite Solution Set for Path-Relinking
+
+### PERSISTENCE ####################################################################
+# --status=./GRASP_Solver_T2T.status       # -S : Status file
+
+### RUNTIME ########################################################################
+--seed=19141108                          # -R : Random Number Seed
+--stoppingCriterion=v                    # -s : Stopping Criterion REQUIRED 
+# --maxTime=0                              # -T : maximum Runtime in seconds
+# --maxIter=0                              # -i : maximum number of iterations
+--targetValue=1.0513e+07                 # -v : target objective value to stop at
+--numRepetitions=250                     # -r : Number of Repetitions of Trys
