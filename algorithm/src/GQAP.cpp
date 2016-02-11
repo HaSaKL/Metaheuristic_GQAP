@@ -424,6 +424,42 @@ void GQAP::GRASPInit(double alpha) {
 }
 
 
+void GQAP::GRASPInit_reduced(double alpha) {
+	// GRASP-Initialization using the provided alpa-value
+	// works similar to GRASPInit, but considers just one random equipment during the list construction
+	
+	// if Random-Initialization is choosen, then do random initialization, since it is much faster
+	// GRASP-Init with alpha = 0 is equal to random initialization
+	if (alpha == 1) {
+		RandomInit();
+		
+	// do GRASP-Init, if alpha > 0
+	} else {
+		// Define a Vector holing the Restricted Candidate List with maximum size
+		std::vector<RCL_element> candidateList(numLocation);
+	
+		// current Assignment
+		Assignment cAssign;
+	
+		// set the current solution to an undefined representation to distinguish it from valid partial solution
+		//solution = std::vector<int>(numEquip, -1);
+		solution = eoVector<eoMinimizingFitness, int>(numEquip, -1);
+	
+		// reset the values for capacity violations
+		numViolatedLocations = 0;
+		numViolatedCapacityUnits = 0;
+	
+		// Initialize the RCL
+		GRASPInitReducedCandiateList(candidateList);
+	
+		// Add Assignments, until solution has been constructed
+		for (int i = 0; i < numEquip; i++) {
+			GRASPAddAssignment_CostBased(candidateList, alpha);
+			GRASPUpdateReducedCandiateList(candidateList);
+		}
+	}
+}
+
 void GQAP::GRASPInitCandidateList(std::vector<RCL_element>& _rcl) {
 	// Initialize the Candidate List
 	
@@ -451,6 +487,25 @@ void GQAP::GRASPInitCandidateList(std::vector<RCL_element>& _rcl) {
 	}
 	std::cout << std::endl<<std::endl;
 	//*/
+}
+
+void GQAP::GRASPInitReducedCandiateList(std::vector<RCL_element>& _rcl) {
+	// Initialized a reduced candiate llist for quciker GRASP Init
+	
+	// the list only considers intallation costs,
+	// since the previous assignment is known and therefore no transportation is needed
+	
+	double costs;
+	Assignment cAssign;
+	
+	// randomly choose an equipment and add all location combinations to the RCL with their respective installation costs
+	int equip = rng.random(numEquip);
+	cAssign.first = equip;
+	for (int k = 0; k < numLocation; k++) {
+		cAssign.second = k;
+		costs = matrixInstallCost[equip][k];
+		_rcl[k] = RCL_element(costs, cAssign);
+	}
 }
 
 
@@ -506,6 +561,48 @@ void GQAP::GRASPAddAssignment_CostBased(std::vector<RCL_element>& _rcl, double a
 	// */
 }
 
+void GQAP::GRASPReducedAddAssignment_CostBased(std::vector<RCL_element>& _rcl, double alpha) {
+	// randomly chooses an additional assignment to add to the solution
+	// for the reduced GRASP the RCL is not changed but will be overwirtten 
+	// during the RCL-Update
+	
+	// order the RCL by its costs values
+	std::sort(_rcl.begin(), _rcl.end());
+	
+	// select a member of the RCL randomly using the alpha-parameter
+	// while considering the cut-off cost for the RCL (value-based RCL)
+	double minCostIncrease = _rcl.front().first;
+	double maxCostIncrease = _rcl.back().first;
+	double maxRCLCost = minCostIncrease + alpha * (maxCostIncrease - minCostIncrease);
+	
+	// find first index of sorted RCL list element with higher then cut-off costs
+	// implementaion using std::upper_bound does not work b/c of type is 
+	// RCL_element and not astandard data type
+	int i = 0;
+	while (i < _rcl.size()) {
+		if(_rcl[i].first >= maxRCLCost) {
+			break;
+		} else {
+			i++;
+		}
+	}
+	
+	// choose an assignment from the resticted list randomly
+	int idxRCL = rng.random(i+1); 	// draw from [0,i+1)
+	int cEquipment = _rcl[idxRCL].second.first;
+	int cLocation  = _rcl[idxRCL].second.second;
+	
+	// add choosen assignment to solution
+	solution[cEquipment] = cLocation;
+	
+	// update the capacity utilization after the new assignment
+	GRASPUpdateCapacityViolation(cEquipment, cLocation);
+	
+	/* // DEBUG Print choosen Assignment
+	std::cout << "MaxRCL Costs (cut-off if >= :" << maxRCLCost << std::endl;
+	std::cout << "Choosen Assignment: " << cEquipment << " -> " << cLocation << std::endl;
+	// */
+}
 
 void GQAP::GRASPUpdateCapacityViolation(int Equipment, int Location) {
 	
@@ -567,6 +664,31 @@ void GQAP::GRASPUpdateCandidateList(std::vector<RCL_element>& _rcl) {
 	}
 	std::cout << std::endl<<std::endl;
 	//*/
+}
+
+void GQAP::GRASPUpdateReducedCandiateList(std::vector<RCL_element>& _rcl) {
+	// now construct a new rcl for a random unassigned equipment
+	
+	// construct a vector with an index of all unassigned equipment
+	std::vector<int> equip_idx;
+	for (int i = 0; i < numEquip; i++) {
+		if (solution[i] == -1) {
+			equip_idx.push_back(i);
+		}
+	}
+	
+	// choose a radom index from that vector
+	int equip = equip_idx[rng.random(equip_idx.size())];
+	
+	// now rewrite the RCL for the choosen equipment
+	double costs;
+	Assignment cAssign;
+	cAssign.first = equip;
+	for (int k = 0; k < numLocation; k++) {
+		cAssign.second = k;
+		costs = GRASPCalculateCostIncrease(cAssign);
+		_rcl[k] = RCL_element(costs,cAssign);
+	}
 }
 
 

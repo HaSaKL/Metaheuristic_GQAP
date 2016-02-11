@@ -96,6 +96,9 @@ struct parameters {
 	// 'U' - GRASP with Uniformly Distributed Alpha
 	char StartSol;
 	
+	// see if a fast GRASP should be used (not evaluating all location - equipment combinations but for a (fixed) random equipment all locations
+	bool StartGRASPQuick;
+	
 	// fixed alpha value if given
 	double fixedAlpha;
 	
@@ -222,6 +225,12 @@ inline void parseFile(eoParser & parser, parameters & param) {
 		true);
 	parser.processParam(StartSol, "Construction");
 	
+	eoValueParam<bool> StartGRASPQuick(false,
+		"QuickGRASP",
+		"Do quicker GRASP Init",
+		'q',
+		false);
+	parser.processParam(StartGRASPQuick, "Construction");
 		
 	eoValueParam<double> fixedAlpha(0.2,
 		"fixedAlpha",

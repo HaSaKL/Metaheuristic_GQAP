@@ -32,6 +32,9 @@ StartSol		'a'	'r'		StartSolRandom
 				'R'		StartSolGRASPReactive
 				'U'		StartSolGRASPUniform
 
+QuickGRASP		'q'	bool		true: quicker init (considers one equipment)
+						false: standard GRASP
+
 fixedAlpha		'f'	double		fixed Alpha Value for GRASP
 
 minAlpha		'm'	double		Minimum Alpha Value for Reactive and Random GRASP

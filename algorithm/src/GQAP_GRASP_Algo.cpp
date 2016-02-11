@@ -142,7 +142,14 @@ GQAP_GRASP_Algo::~GQAP_GRASP_Algo() {
 void GQAP_GRASP_Algo::GRASPIteration() {
 	
 	// Initialize the a Soluion
-	p->GRASPInit(alpha->operator ()(*p));
+	switch(param.StartGRASPQuick) {
+		case true:
+			p->GRASPInit_reduced(alpha->operator ()(*p));
+			break;
+		case false:
+			p->GRASPInit(alpha->operator ()(*p));
+			break;
+	}
 	fullEval(*p);
 	
 	// Do the Local Search
