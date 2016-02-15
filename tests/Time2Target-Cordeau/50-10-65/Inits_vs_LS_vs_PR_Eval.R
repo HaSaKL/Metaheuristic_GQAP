@@ -44,9 +44,54 @@ data$PRPoolSelect <- factor(data$PRPoolSelect,
                             levels = c(0,1,2),
                             labels = c("Diverse", "Random", "All"))
 
-## get nice summary table
+
 # use dplyr-Packe for easier handling
 library(dplyr)
+
+
+## remove false data for random init from data set
+data <- filter(data, !(StartSol == "Random init" & PRMeth == "Random PR-Move Selector"))
+
+
+
+# Read data from rerun for Random Init and Random PR-Move Selector
+data_rerun <- read.csv2(file = "Test-50-10-65-rerun_RandomInit_RandomPRMove.csv", dec = ".", strip.white = T,  header=TRUE, fill = F,
+          colClasses = c('factor', 'factor', 'factor','factor','factor','factor','numeric','numeric','numeric','numeric','numeric') );
+
+# drop last variable, like above
+data_rerun <- subset(data_rerun, select = -PoolSize)
+
+# label rerun data accoring to code book
+data_rerun$StartSol <- factor(data_rerun$StartSol, 
+                        levels = c(0,1,2,3,4,5,6,7,8),
+                        labels = c("Random init", 
+                                   "Greedy init", "Fixed alpha", "Reactive alpha", "Uniform random alpha",
+                                   "Quick Greedy", "Quick Fixed", "Quick Reactive", "Quick Uniform Random"))
+
+data_rerun$LSStrategy <- factor(data_rerun$LSStrategy,
+                          levels = c(0,1,2),
+                          labels = c("best improve", "random improve", "none"))
+
+data_rerun$PRMeth <- factor(data_rerun$PRMeth,
+                      levels = c(0,1,2,3),
+                      labels = c("Random PR-Move Selector", "Greedy PR-Move Selector", "GRASP PR-Move Selector", "no PR"))
+
+data_rerun$PRDir <- factor(data_rerun$PRDir,
+                     levels = c(0,1,2),
+                     labels = c("Forward", "Backward", "Mixed"))
+
+data_rerun$PRPoolSelect <- factor(data_rerun$PRPoolSelect,
+                            levels = c(0,1,2),
+                            labels = c("Diverse", "Random", "All"))
+
+
+# add rerun data to rest of data
+data <- rbind(data, data_rerun)
+
+
+## get nice summary table
+data <- subset(data, select= Problem:Iterations)
+write.csv2(data, file = "Inits_vs_PRParams.csv")
 
 # group data by Neighborhood, Algorithm and Alphavalue
 gr_data <- group_by(data, StartSol, LSStrategy, PRMeth, PRDir, PRPoolSelect)
@@ -71,6 +116,9 @@ smry <- summarise(gr_data,
 
 # deselect uniform random alpha
 gr_data <- filter(gr_data, StartSol == "Random init" | StartSol == "Reactive alpha" | StartSol == "Quick Reactive")
+
+
+# export data frame for later usage
 
 
 ## exploratroy drawing of Time-To-Target Plots to find out good parameter combinations
