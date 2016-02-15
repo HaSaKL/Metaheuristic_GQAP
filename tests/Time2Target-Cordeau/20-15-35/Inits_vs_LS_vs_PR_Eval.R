@@ -1,11 +1,32 @@
-# Read the data from csv-file produced by the C++-Program
-data <- read.csv2(file = "ResultsLS+PR-Tests.csv", dec = ".", strip.white = T,  header=TRUE, fill = F,
+# Read the data from csv-file produced by the C++-Program - without quick GRASP
+dataNotQuick <- read.csv2(file = "ResultsLS+PR-Tests.csv", dec = ".", strip.white = T,  header=TRUE, fill = F,
           colClasses = c('factor', 'factor', 'factor','factor','factor','factor','numeric','numeric','numeric','numeric','numeric') );
 
+dataNotQuick <- subset(dataNotQuick, select = -X)
+
+# Additionally read the data with quick GRASP and alter the Initialization Method accordingly
+# also drop the PoolSize, since it was not considered in the first test runs
+dataQuick <- read.csv2(file = "ResultsLS+PR-Tests-quick.csv", dec = ".", strip.white = T,  header=TRUE, fill = F,
+          colClasses = c('factor', 'factor', 'factor','factor','factor','factor','numeric','numeric','numeric','numeric','numeric') );
+
+dataQuick <- subset(dataQuick, select = -PoolSize)
+
+levels(dataQuick$StartSol)[levels(dataQuick$StartSol) == 3] <- 7
+levels(dataQuick$StartSol)[levels(dataQuick$StartSol) == 4] <- 8
+
+
+# merge quick and not quick data
+
+data <- rbind(dataQuick, dataNotQuick)
+
+ 
 # label data accoring to code book
+
 data$StartSol <- factor(data$StartSol, 
-                        levels = c(0,1,2,3,4),
-                        labels = c("Random init", "Greedy init", "Fixed alpha", "Reactive alpha", "Uniform random alpha"))
+                                levels = c(0,1,2,3,4,5,6,7,8),
+                                labels = c("Random init", 
+                                           "Greedy init", "Fixed alpha", "Reactive alpha", "Uniform random alpha",
+                                           "Quick Greedy", "Quick Fixed", "Quick Reactive", "Quick Uniform Random"))
 
 data$LSStrategy <- factor(data$LSStrategy,
                           levels = c(0,1,2),
@@ -47,6 +68,10 @@ smry <- summarise(gr_data,
                   median_Time = median(Time),
                   median_Iterations = median(Iterations)
 )
+
+# deselect uniform random alpha
+gr_data <- filter(gr_data, StartSol == "Random init" | StartSol == "Reactive alpha" | StartSol == "Quick Reactive")
+
 
 ## exploratroy drawing of Time-To-Target Plots to find out good parameter combinations
 library(ggplot2)
@@ -168,6 +193,8 @@ dev.off()
 ## Heatmap for Parameter Comparision
 
 smry <- mutate(smry, median_Time = median_Time / 1000, mean_Time = mean_Time / 1000)
+smry <- filter(smry, StartSol == "Random init" | StartSol == "Reactive alpha" | StartSol == "Quick Reactive")
+smry <- filter(smry, LSStrategy == "random improve")
 
 png("PoolParameters_vs_Runtime.png",
     width = 13,
