@@ -74,6 +74,7 @@ public:
 	void fullEvaluation();
 	void RandomInit();
 	void GRASPInit(double alpha);
+	void GRASPInit_reduced(double alpha);
 	
 	// Convinience Fuctions for Fitness Calculations
 	void CalculateCapacityViolations();
@@ -127,8 +128,14 @@ private:
 
 
 	void GRASPInitCandidateList(std::vector<RCL_element> & _rcl);
+	void GRASPInitReducedCandiateList(std::vector<RCL_element> & _rcl);
+	
 	void GRASPUpdateCandidateList(std::vector<RCL_element> & _rcl);
+	void GRASPUpdateReducedCandiateList(std::vector<RCL_element> & _rcl);
+	
 	void GRASPAddAssignment_CostBased(std::vector<RCL_element> & _rcl, double alpha);
+	void GRASPReducedAddAssignment_CostBased(std::vector<RCL_element> & _rcl, double alpha);
+	
 	void GRASPUpdateCapacityViolation(int Equipment, int Location);
 	double GRASPCalculateCostIncrease(Assignment & _assign);
 	void GRASPCalculateCapacityViolation(int Equipment, int Location,
