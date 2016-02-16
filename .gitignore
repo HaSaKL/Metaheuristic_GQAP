@@ -33,3 +33,7 @@
 # The build folder
 /algorithm/build/
 /playground/
+
+# RStudio and R Files
+.RData
+.Rhistory

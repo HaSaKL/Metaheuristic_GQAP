@@ -143,7 +143,7 @@ png("Iterations_StartSol_vs_PRMeth_vs_PRDir_PoolSelectRandom.png",
 )
 ggplot(gr_data_f, aes(Iterations, color = PRMeth, linetype = PRMeth)) + 
   stat_ecdf(geom='line') + 
-  xlim(0,5000) + geom_hline(1) +
+  xlim(0,5000) + #geom_hline(y=1) +
   facet_grid(PRDir ~ StartSol, labeller = label_both) +
   ylab("ECDF") +
   xlab("Iterations")
@@ -184,9 +184,6 @@ ggplot(gr_data_f, aes(Iterations, color = PRMeth, linetype = PRMeth)) +
   ylab("ECDF") +
   xlab("Iterations")
 dev.off()
-
-
-
 
 
 
