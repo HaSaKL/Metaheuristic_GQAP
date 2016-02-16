@@ -18,13 +18,13 @@ The analysis is carried out using the Analysis of Variation (ANOVA)
 
 Read the relevant data.  This assumes the data file is download to the current working directory.
 
-```{r echo=FALSE}
+```{r}
 data_inf <- read.csv2("Inits_vs_PRParams.csv")
 ```
 
 Remove the GRASP PR-Move Selector from the data, since it is only avaible for the GRASP and quick-GRASP intitializations.
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 library(dplyr)
 ```
 
@@ -294,7 +294,7 @@ plotdata <- filter(data_inf, PRMeth == "Greedy PR-Move Selector", PRDir == "Back
 ggplot(data = plotdata, aes(y=Time/1000, x = StartSol)) +
   geom_violin() +
   geom_boxplot(width=0.1) +
-  coord_flip() +
+  #coord_flip() +
   labs(y = "Runtime in sec")
 ```
 
