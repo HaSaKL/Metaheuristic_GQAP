@@ -247,25 +247,25 @@ smry <- filter(smry, LSStrategy == "random improve")
 
 
 png("PoolParameters_vs_Runtime.png",
-    width = 16,
-    height = 12,
+    width = 20,
+    height = 15,
     units = "cm",
     res = 1200,
-    pointsize = 12,
+    pointsize = 14,
     antialias = "cleartype"
 )
 
 ggplot(data = smry, aes(x=PRDir, y=PRPoolSelect, fill=median_Time)) +
   geom_tile() +
   facet_grid(StartSol ~  PRMeth) +
-  theme_bw(base_size = 12, base_family = "serif") +
+  theme_bw(base_size = 14, base_family = "serif") +
   theme (legend.position = "bottom",
          legend.direction = "horizontal",
          legend.background = element_rect(colour = "black"),
          panel.grid.major = element_blank()
   ) +
-  scale_fill_gradient(low="gray10", 
-                      high="gray90", 
+  scale_fill_gradient(low="#333393", 
+                      high="#B9B9FF", 
                       name = "Median Runtime in seconds", 
                       trans = "log",
                       breaks = c(2,8,32,128),
