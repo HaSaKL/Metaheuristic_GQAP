@@ -194,25 +194,25 @@ smry <- filter(smry, StartSol == "Random init" | StartSol == "Reactive alpha" | 
 smry <- filter(smry, LSStrategy == "random improve")
 
 png("PoolParameters_vs_Runtime.png",
-    width = 13,
-    height = 10,
+    width = 20,
+    height = 15,
     units = "cm",
     res = 1200,
-    pointsize = 10,
+    pointsize = 14,
     antialias = "cleartype"
 )
 
 ggplot(data = smry, aes(x=PRDir, y=PRPoolSelect, fill=median_Time)) +
   geom_tile() +
   facet_grid(StartSol ~  PRMeth) +
-  theme_bw(base_size = 10, base_family = "serif") +
+  theme_bw(base_size = 14, base_family = "serif") +
   theme (legend.position = "bottom",
          legend.direction = "horizontal",
          legend.background = element_rect(colour = "black"),
          panel.grid.major = element_blank()
   ) +
-  scale_fill_gradient(low="gray10", 
-                      high="gray90", 
+  scale_fill_gradient(low="#333393", 
+                      high="#B9B9FF", 
                       name = "Median solution time in seconds", 
                       trans = "log",
                       breaks = c(0.75,1.5,3),
